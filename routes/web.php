@@ -6,6 +6,7 @@ use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Buyer\DashboardController as BuyerDashboard;
 use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 use App\Http\Controllers\Seller\ProductController;
+use App\Http\Controllers\Buyer\ProductController as BuyerProductController;
 
 Route::get('/', function () {
     return 'Home';
@@ -28,4 +29,12 @@ Route::middleware(['role:seller'])
     ->name('seller.')
     ->group(function () {
         Route::resource('products', ProductController::class);
+    });
+
+    Route::middleware(['role:buyer'])
+    ->prefix('buyer')
+    ->name('buyer.')
+    ->group(function () {
+        Route::get('products', [BuyerProductController::class, 'index']);
+        Route::get('products/{product}', [BuyerProductController::class, 'show']);
     });
