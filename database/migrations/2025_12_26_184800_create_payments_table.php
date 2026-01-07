@@ -18,7 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('payment_method');
             $table->string('payment_status');
-            $table->string('payment_qr');
+            $table->string('payment_qr')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
