@@ -32,7 +32,7 @@ Route::middleware(['role:seller'])
         Route::resource('products', ProductController::class);
     });
 
-    Route::middleware(['role:buyer'])
+Route::middleware(['role:buyer'])
     ->prefix('buyer')
     ->name('buyer.')
     ->group(function () {
@@ -40,11 +40,21 @@ Route::middleware(['role:seller'])
         Route::get('products/{product}', [BuyerProductController::class, 'show']);
     });
 
-    Route::middleware(['role:buyer'])
+Route::middleware(['role:buyer'])
     ->prefix('buyer')
     ->name('buyer.')
     ->group(function () {
         Route::post('orders', [OrderController::class, 'store']);
         Route::get('orders', [OrderController::class, 'index']);
         Route::get('orders/{order}', [OrderController::class, 'show']);
+    });
+
+Route::middleware(['role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::patch(
+            'orders/{order}/status',
+             [OrderController::class, 'updateStatus']
+        )->name('orders.update-status');
     });
