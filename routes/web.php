@@ -7,6 +7,7 @@ use App\Http\Controllers\Buyer\DashboardController as BuyerDashboard;
 use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\ProductController as BuyerProductController;
+use App\Http\Controllers\Buyer\OrderController;
 
 Route::get('/', function () {
     return 'Home';
@@ -37,4 +38,13 @@ Route::middleware(['role:seller'])
     ->group(function () {
         Route::get('products', [BuyerProductController::class, 'index']);
         Route::get('products/{product}', [BuyerProductController::class, 'show']);
+    });
+
+    Route::middleware(['role:buyer'])
+    ->prefix('buyer')
+    ->name('buyer.')
+    ->group(function () {
+        Route::post('orders', [OrderController::class, 'store']);
+        Route::get('orders', [OrderController::class, 'index']);
+        Route::get('orders/{order}', [OrderController::class, 'show']);
     });
