@@ -1,23 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
+use App\Http\Controllers\Buyer\DashboardController as BuyerDashboard;
+use App\Http\Controllers\Courier\DashboardController as CourierDashboard;
 
 Route::get('/', function () {
     return 'Home';
 });
 
 Route::middleware(['role:admin'])
-    ->get('/admin', [DashboardController::class, 'index']);
+    ->get('/admin', [AdminDashboard::class, 'index']);
 
-Route::middleware(['role:seller'])->get('/seller', function () {
-    return 'Seller OK';
-});
+Route::middleware(['role:seller'])
+    ->get('/seller', [SellerDashboard::class, 'index']);
 
-Route::middleware(['role:buyer'])->get('/buyer', function () {
-    return 'Buyer OK';
-});
+Route::middleware(['role:buyer'])
+    ->get('/buyer', [BuyerDashboard::class, 'index']);
 
-Route::middleware(['role:courier'])->get('/courier', function () {
-    return 'Courier OK';
-});
+Route::middleware(['role:courier'])
+    ->get('/courier', [CourierDashboard::class, 'index']);
