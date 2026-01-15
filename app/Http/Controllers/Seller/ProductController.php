@@ -11,7 +11,11 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return 'Seller Product Controller OK';
+     $products = Product::where('seller_id', auth()->id())
+        ->latest()
+        ->paginate(10);
+
+        return view('seller.products.index', compact('products'));
     }
 
     public function update(UpdateProductRequest $request, Product $product)
@@ -36,9 +40,9 @@ class ProductController extends Controller
 
         $product->update($data);
 
-        return response()->json([
-            'message' => 'Produk berhasil diperbarui'
-        ]);
+        return redirect()
+         ->route('seller.products.index')
+    ->with('success', 'Produk berhasil diperbarui');
     }
 
     public function destroy(Product $product)
@@ -53,8 +57,8 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return response()->json([
-            'message' => 'Produk berhasil dihapus'
-        ]);
+        return redirect()
+        ->route('seller.products.index')
+        ->with('success', 'Produk berhasil dihapus');
     }
 }
