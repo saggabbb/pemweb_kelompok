@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 
-class DashboardController extends Controller
+class OrderController extends Controller
 {
     /**
      * Daftar order yang ditugaskan ke courier
@@ -23,7 +23,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Konfirmasi order selesai dikirim
+     * Konfirmasi order selesai
      */
     public function complete(Order $order)
     {
@@ -32,15 +32,13 @@ class DashboardController extends Controller
         }
 
         if ($order->status !== 'shipped') {
-            abort(400, 'Order belum dalam pengiriman');
+            abort(400, 'Order belum dikirim');
         }
 
         $order->update([
-            'status' => 'completed'
+            'status' => 'completed',
         ]);
 
-        return redirect()
-            ->back()
-            ->with('success', 'Order berhasil diselesaikan');
+        return back()->with('success', 'Order berhasil diselesaikan');
     }
 }
