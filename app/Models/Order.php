@@ -27,6 +27,11 @@ class Order extends Model
         return $this->belongsTo(User::class, 'courier_id');
     }
 
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
     public function details()
     {
         return $this->hasMany(OrderDetail::class);

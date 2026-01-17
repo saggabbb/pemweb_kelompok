@@ -15,7 +15,7 @@ class ProductController extends Controller
             ->latest()
             ->get();
 
-        return response()->json($products);
+        return view('buyer.products.index', compact('products'));
     }
 
     public function show(Product $product)

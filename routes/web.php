@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -14,6 +15,9 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 Route::get('/', function () {
     return 'Home';
 });
+
+Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
 
 Route::middleware(['role:admin'])
     ->get('/admin', [AdminDashboard::class, 'index']);
@@ -32,6 +36,7 @@ Route::middleware(['role:seller'])
     ->name('seller.')
     ->group(function () {
         Route::resource('products', ProductController::class);
+        Route::resource('orders', \App\Http\Controllers\Seller\OrderController::class)->only(['index', 'show', 'update']);
     });
 
 Route::middleware(['role:buyer'])
