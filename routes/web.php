@@ -13,8 +13,10 @@ use App\Http\Controllers\Courier\OrderController as CourierOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 Route::get('/', function () {
-    return 'Home';
+    return view('welcome');
 });
+
+Route::get('/explore', \App\Http\Controllers\Public\ExploreController::class)->name('explore');
 
 Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
@@ -43,15 +45,18 @@ Route::middleware(['role:buyer'])
     ->prefix('buyer')
     ->name('buyer.')
     ->group(function () {
-        Route::post('orders', [BuyerOrderController::class, 'store']);
-        Route::get('orders', [BuyerOrderController::class, 'index']);
-        Route::get('orders/{order}', [BuyerOrderController::class, 'show']);
+        Route::post('orders', [BuyerOrderController::class, 'store'])->name('orders.store');
+        Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
     });
 
 Route::middleware(['role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        
+        // Orders
         Route::get('orders', [AdminOrderController::class, 'index'])
             ->name('orders.index');
 
@@ -66,6 +71,14 @@ Route::middleware(['role:admin'])
 
         Route::post('orders/{order}/assign-courier', [AdminOrderController::class, 'assignCourier'])
             ->name('orders.assign-courier');
+
+        // Categories (CRUD with Modal)
+        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->except(['show', 'create', 'edit']); 
+        // Note: create/edit are handled via modal in index, so we strictly don't need separate routes for them, 
+        // but 'resource' creates them anyway. We can except them to keep it clean.
+        
+        // Users (Full CRUD)
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     });
 
 Route::middleware(['role:courier'])
@@ -75,3 +88,5 @@ Route::middleware(['role:courier'])
         Route::get('orders', [CourierOrderController::class, 'index']);
         Route::post('orders/{order}/complete', [CourierOrderController::class, 'complete']);
     });
+
+require __DIR__.'/auth.php';

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Belantra') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,24 +13,39 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
+        <!-- Alpine.js is included in app.js via bootstrap usually, but ensure x-cloak style -->
+        <style>
+            [x-cloak] { display: none !important; }
+        </style>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
+        <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+            <!-- Sidebar -->
+            @include('layouts.sidebar')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            <div class="flex-1 flex flex-col overflow-hidden">
+                <!-- Topbar -->
+                @include('layouts.topbar')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                <!-- Main Content -->
+                <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6">
+                    <!-- Flash Message -->
+                    @if (session('success'))
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <span class="block sm:inline">{{ session('success') }}</span>
+                        </div>
+                    @endif
+                    
+                    @if (session('error'))
+                         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <span class="block sm:inline">{{ session('error') }}</span>
+                        </div>
+                    @endif
+
+                    {{ $slot }}
+                </main>
+            </div>
         </div>
     </body>
 </html>

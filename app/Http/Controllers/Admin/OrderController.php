@@ -14,11 +14,19 @@ class OrderController extends Controller
      /**
      * Tampilkan daftar semua order
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with(['buyer', 'courier', 'payment'])
-            ->latest()
-            ->paginate(10);
+        $query = Order::with(['buyer', 'courier', 'payment'])->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('order_date', $request->date);
+        }
+
+        $orders = $query->paginate(10);
 
         return view('admin.orders.index', compact('orders'));
     }
