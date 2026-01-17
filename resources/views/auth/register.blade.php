@@ -35,6 +35,13 @@
             <x-input-error :messages="$errors->get('role_id')" class="mt-2 text-red-500" />
         </div>
 
+        <!-- Address -->
+        <div class="mb-4">
+            <label for="address" class="block font-medium text-sm text-gray-700">Address</label>
+            <textarea id="address" name="address" rows="3" class="block mt-1 w-full border p-2 rounded border-gray-300" placeholder="Masukkan alamat lengkap Anda" required></textarea>
+            <x-input-error :messages="$errors->get('address')" class="mt-2 text-red-500" />
+        </div>
+
         <!-- Password -->
         <div class="mb-4">
             <label for="password" class="block font-medium text-sm text-gray-700">Password</label>

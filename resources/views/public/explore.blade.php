@@ -24,16 +24,18 @@
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             @foreach($products as $product)
                                 <div class="border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
-                                    <div class="h-40 bg-gray-100 dark:bg-gray-700 mb-4 flex items-center justify-center rounded">
-                                        @if($product->image)
-                                            <img src="{{ Storage::url($product->image) }}" alt="{{ $product->product_name }}" class="h-full object-contain">
-                                        @else
-                                            <span class="text-gray-500">No Image</span>
-                                        @endif
-                                    </div>
-                                    <h4 class="font-bold text-lg mb-1">{{ $product->product_name }}</h4>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ $product->category->name }}</p>
-                                    <p class="font-bold text-indigo-600 mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                    <a href="{{ route('products.show', $product) }}">
+                                        <div class="h-40 bg-gray-100 dark:bg-gray-700 mb-4 flex items-center justify-center rounded">
+                                            @if($product->image)
+                                                <img src="{{ Storage::url($product->image) }}" alt="{{ $product->product_name }}" class="h-full object-contain">
+                                            @else
+                                                <span class="text-gray-500">No Image</span>
+                                            @endif
+                                        </div>
+                                        <h4 class="font-bold text-lg mb-1">{{ $product->product_name }}</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{{ $product->category->category_name }}</p>
+                                        <p class="font-bold text-indigo-600 mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                    </a>
                                     
                                     @auth
                                         <form action="{{ route('buyer.cart.store') }}" method="POST">

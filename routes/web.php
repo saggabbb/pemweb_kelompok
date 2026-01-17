@@ -35,6 +35,12 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['auth'])->get('/explore', \App\Http\Controllers\Public\ExploreController::class)->name('explore');
 
+// Product Detail (Public but auth required for cart)
+Route::get('/products/{product}', [\App\Http\Controllers\Public\ProductController::class, 'show'])->name('products.show');
+
+// Store Profile & Catalog
+Route::get('/store/{seller}', [\App\Http\Controllers\Public\StoreController::class, 'show'])->name('store.show');
+
 Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
 
