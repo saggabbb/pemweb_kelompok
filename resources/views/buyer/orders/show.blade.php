@@ -46,13 +46,32 @@
 
                 <!-- QR Code -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg flex items-center justify-center p-6">
-                    <div class="text-center">
-                        <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-gray-100">Order QR Code</h3>
-                        <div class="bg-white p-2 inline-block rounded-lg">
-                            {!! $qrCode !!}
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Payment Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Method</p>
+                                    <p class="mt-1 text-base font-semibold text-gray-900 dark:text-white uppercase">{{ $order->payment_method }}</p>
+                                </div>
+                                
+                                @if($order->payment_method === 'transfer')
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Payment QR Code</p>
+                                        <div class="bg-white p-4 rounded-lg inline-block border border-gray-200">
+                                            {!! $qrCode !!}
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-2">Scan to pay via QRIS</p>
+                                    </div>
+                                @elseif($order->payment_method === 'cod')
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Payment Instruction</p>
+                                        <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-900/50">
+                                            <p class="text-yellow-800 dark:text-yellow-200 font-medium">Please pay cash to the courier upon delivery.</p>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">Show this to the courier</p>
-                    </div>
                 </div>
             </div>
 

@@ -13,13 +13,21 @@
                 </svg>
             </span>
             <!-- Need to implement search logic later -->
-            <form action="{{ route('dashboard') }}" method="GET"> {{-- Or specialized search route --}}
+            <form action="{{ route('explore') }}" method="GET"> {{-- Or specialized search route --}}
                 <input class="form-input w-32 sm:w-64 rounded-md pl-10 pr-4 focus:border-indigo-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 text-sm" type="text" name="search" placeholder="Search..." value="{{ request('search') }}">
             </form>
         </div>
     </div>
 
     <div class="flex items-center gap-4">
+        @if(auth()->user()->role->role_name === 'buyer')
+            <a href="{{ route('buyer.cart.index') }}" class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                
+                {{-- Badge count (Optional, complex to implement efficiently without view composer, skipping for now or user ajax) --}}
+            </a>
+        @endif
+
         <!-- Dark Mode Toggle -->
          <button onclick="toggleDarkMode()" class="p-2 text-gray-500 rounded-lg hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 focus:outline-none">
             <!-- Sun Icon (for Dark Mode) -->
@@ -43,7 +51,7 @@
                     <span class="block text-xs text-indigo-500">{{ Auth::user()->role->role_name }}</span>
                 </div>
                 
-                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-600 hover:text-white">Profile</a>
+                {{-- <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-600 hover:text-white">Profile</a> --}}
                 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

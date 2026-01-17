@@ -10,13 +10,30 @@ use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Buyer\ProductController as BuyerProductController;
 use App\Http\Controllers\Buyer\OrderController as BuyerOrderController;
 use App\Http\Controllers\Courier\OrderController as CourierOrderController;
+use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/explore', \App\Http\Controllers\Public\ExploreController::class)->name('explore');
+Route::get('/dashboard', function () {
+    if (!auth()->check()) {
+        return redirect('/login');
+    }
+    
+    $role = auth()->user()->role->role_name;
+
+    return match ($role) {
+        'admin' => redirect()->route('admin.dashboard'),
+        'seller' => redirect()->route('seller.dashboard'),
+        'buyer' => redirect()->route('buyer.dashboard'),
+        'courier' => redirect()->route('courier.dashboard'),
+        default => redirect('/'),
+    };
+})->middleware(['auth'])->name('dashboard');
+
+Route::middleware(['auth'])->get('/explore', \App\Http\Controllers\Public\ExploreController::class)->name('explore');
 
 Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
@@ -45,9 +62,14 @@ Route::middleware(['role:buyer'])
     ->prefix('buyer')
     ->name('buyer.')
     ->group(function () {
-        Route::post('orders', [BuyerOrderController::class, 'store'])->name('orders.store');
-        Route::get('orders', [BuyerOrderController::class, 'index'])->name('orders.index');
-        Route::get('orders/{order}', [BuyerOrderController::class, 'show'])->name('orders.show');
+        Route::get('/', [BuyerDashboard::class, 'index'])->name('dashboard');
+        
+        // Orders
+        Route::resource('orders', BuyerOrderController::class);
+
+        // Cart
+        Route::resource('cart', CartController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::post('checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     });
 
 Route::middleware(['role:admin'])
@@ -85,8 +107,8 @@ Route::middleware(['role:courier'])
     ->prefix('courier')
     ->name('courier.')
     ->group(function () {
-        Route::get('orders', [CourierOrderController::class, 'index']);
-        Route::post('orders/{order}/complete', [CourierOrderController::class, 'complete']);
+        Route::get('orders', [CourierOrderController::class, 'index'])->name('orders.index');
+        Route::post('orders/{order}/complete', [CourierOrderController::class, 'complete'])->name('orders.complete');
     });
 
 require __DIR__.'/auth.php';
