@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class CategorySeeder extends Seeder
 {
@@ -12,32 +13,26 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-         Category::insert([
-            [
-                'category_name' => 'Elektronik',
-                'description' => 'Produk elektronik',
-                'status' => 'active',
-            ],
-            [
-                'category_name' => 'Fashion',
-                'description' => 'Produk fashion',
-                'status' => 'active',
-            ],
-            [
-                'category_name' => 'Makanan',
-                'description' => 'Produk makanan',
-                'status' => 'active',
-            ],
-            [
-                'category_name' => 'Kesehatan',
-                'description' => 'Produk kesehatan',
-                'status' => 'active',
-            ],
-            [
-                'category_name' => 'Olahraga',
-                'description' => 'Produk olahraga',
-                'status' => 'active',
-            ],
-        ]);
+        $now = Carbon::now();
+        
+        $categories = [
+            ['category_name' => 'Elektronik', 'description' => 'Peralatan elektronik dan gadget', 'status' => 'active'],
+            ['category_name' => 'Fashion', 'description' => 'Pakaian, sepatu, dan aksesori', 'status' => 'active'],
+            ['category_name' => 'Kesehatan & Kecantikan', 'description' => 'Produk kesehatan dan perawatan', 'status' => 'active'],
+            ['category_name' => 'Rumah Tangga', 'description' => 'Peralatan dan furniture rumah', 'status' => 'active'],
+            ['category_name' => 'Olahraga', 'description' => 'Peralatan olahraga dan fitness', 'status' => 'active'],
+            ['category_name' => 'Makanan & Minuman', 'description' => 'Makanan, minuman, dan snack', 'status' => 'active'],
+            ['category_name' => 'Ibu & Bayi', 'description' => 'Perlengkapan ibu dan bayi', 'status' => 'active'],
+            ['category_name' => 'Buku & Alat Tulis', 'description' => 'Buku, majalah, dan alat tulis', 'status' => 'active'],
+            ['category_name' => 'Otomotif', 'description' => 'Aksesori kendaraan', 'status' => 'active'],
+            ['category_name' => 'Hobi & Koleksi', 'description' => 'Mainan, koleksi, dan hobi', 'status' => 'active'],
+        ];
+
+        foreach ($categories as &$category) {
+            $category['created_at'] = $now;
+            $category['updated_at'] = $now;
+        }
+
+        DB::table('categories')->insert($categories);
     }
 }

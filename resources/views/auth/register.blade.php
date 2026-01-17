@@ -22,9 +22,15 @@
         <div class="mb-4">
             <label for="role_id" class="block font-medium text-sm text-gray-700">Register as</label>
             <select id="role_id" name="role_id" class="block mt-1 w-full border p-2 rounded border-gray-300">
-                <option value="2">Buyer (Pembeli)</option>
-                <option value="3">Seller (Penjual)</option>
-                <option value="4">Courier (Kurir)</option>
+                @foreach($roles as $role)
+                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                        {{ ucfirst($role->role_name) }} 
+                        @if($role->role_name === 'buyer') (Pembeli)
+                        @elseif($role->role_name === 'seller') (Penjual)
+                        @elseif($role->role_name === 'courier') (Kurir)
+                        @endif
+                    </option>
+                @endforeach
             </select>
             <x-input-error :messages="$errors->get('role_id')" class="mt-2 text-red-500" />
         </div>

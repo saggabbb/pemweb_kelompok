@@ -19,7 +19,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $roles = \App\Models\Role::whereIn('role_name', ['buyer', 'seller', 'courier'])->get();
+        return view('auth.register', compact('roles'));
     }
 
     /**

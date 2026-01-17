@@ -25,10 +25,10 @@ Route::get('/dashboard', function () {
     $role = auth()->user()->role->role_name;
 
     return match ($role) {
-        'admin' => redirect()->route('admin.dashboard'),
-        'seller' => redirect()->route('seller.dashboard'),
-        'buyer' => redirect()->route('buyer.dashboard'),
-        'courier' => redirect()->route('courier.dashboard'),
+        'admin' => redirect('/admin'),
+        'seller' => redirect('/seller'),
+        'buyer' => redirect('/buyer'),
+        'courier' => redirect('/courier'),
         default => redirect('/'),
     };
 })->middleware(['auth'])->name('dashboard');
@@ -39,16 +39,20 @@ Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
 
 Route::middleware(['role:admin'])
-    ->get('/admin', [AdminDashboard::class, 'index']);
+    ->get('/admin', [AdminDashboard::class, 'index'])
+    ->name('admin.dashboard');
 
 Route::middleware(['role:seller'])
-    ->get('/seller', [SellerDashboard::class, 'index']);
+    ->get('/seller', [SellerDashboard::class, 'index'])
+    ->name('seller.dashboard');
 
 Route::middleware(['role:buyer'])
-    ->get('/buyer', [BuyerDashboard::class, 'index']);
+    ->get('/buyer', [BuyerDashboard::class, 'index'])
+    ->name('buyer.dashboard');
 
 Route::middleware(['role:courier'])
-    ->get('/courier', [CourierDashboard::class, 'index']);
+    ->get('/courier', [CourierDashboard::class, 'index'])
+    ->name('courier.dashboard');
 
 Route::middleware(['role:seller'])
     ->prefix('seller')

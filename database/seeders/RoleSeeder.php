@@ -12,22 +12,36 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        $now = now();
+        
         Role::insert([
             [
                 'role_name' => 'admin',
-                'description' => 'Administrator sistem'
-            ],
-            [
-                'role_name' => 'seller',
-                'description' => 'Penjual produk'
+                'description' => 'Administrator sistem',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'role_name' => 'buyer',
-                'description' => 'Pembeli produk'
+                'description' => 'Pembeli produk',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'role_name' => 'seller',
+                'description' => 'Penjual produk',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
             [
                 'role_name' => 'courier',
-                'description' => 'Kurir pengiriman'
+                'description' => 'Kurir pengiriman',
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
             ],
         ]);
     }

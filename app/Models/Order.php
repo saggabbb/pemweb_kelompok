@@ -12,10 +12,12 @@ class Order extends Model
     protected $fillable = [
         'buyer_id',
         'seller_id',
+        'courier_id',
         'order_date',
         'total_price',
+        'shipping_fee',
         'status',
-        'payment_method'
+        'payment_method',
     ];
 
     public function buyer()

@@ -34,12 +34,20 @@ class AuthenticatedSessionController extends Controller
             abort(403, 'Role belum ditentukan');
         }
 
+        // Debug: Log the actual role for debugging
+        \Log::info('Login redirect debug', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'role_id' => $user->role_id,
+            'role_name' => $user->role->role_name ?? 'null',
+        ]);
+
         return match ($user->role->role_name) {
             'admin'   => redirect()->intended('/admin'),
             'seller'  => redirect()->intended('/seller'),
             'buyer'   => redirect()->intended('/buyer'),
             'courier' => redirect()->intended('/courier'),
-            default   => abort(403, 'Role tidak dikenali'),
+            default   => abort(403, 'Role tidak dikenali: ' . $user->role->role_name),
         };
     }
 
