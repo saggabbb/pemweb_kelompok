@@ -36,13 +36,18 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        $order->load(['buyer', 'courier', 'details.product', 'payment']);
+        $order->load(['buyer', 'seller', 'courier', 'details.product', 'payment']);
+        
+        // Get all couriers for assignment dropdown
+        $couriers = User::whereHas('role', function($q) {
+            $q->where('role_name', 'courier');
+        })->get();
 
-        return view('admin.orders.show', compact('order'));
+        return view('admin.orders.show', compact('order', 'couriers'));
     }
 
     /**
-     * Update status order (FORM HTML)
+     * Update status order & Auto-assign courier
      */
     public function updateStatus(Request $request, Order $order)
     {
@@ -50,8 +55,44 @@ class OrderController extends Controller
             'status' => 'required|in:confirmed,shipped,completed,cancelled'
         ]);
 
+        $newStatus = $request->status;
+
+        // If confirming order, auto-assign available courier
+        if ($newStatus === 'confirmed' && !$order->courier_id) {
+            // Find courier with no active deliveries (not having orders with status 'shipped')
+            $availableCourier = User::whereHas('role', function($q) {
+                $q->where('role_name', 'courier');
+            })
+            ->whereDoesntHave('courierOrders', function($q) {
+                $q->where('status', 'shipped');
+            })
+            ->first();
+
+            if (!$availableCourier) {
+                return back()->with('error', 'Tidak ada kurir yang tersedia saat ini!');
+            }
+
+            // If COD, courier advances payment to seller
+            if ($order->payment_method === 'cod') {
+                $seller = User::findOrFail($order->seller_id);
+                
+                // Courier advances payment to seller (balance can go negative)
+                $availableCourier->decrement('balance', $order->total_price);
+                $seller->increment('balance', $order->total_price);
+            }
+
+            // Assign courier
+            $order->courier_id = $availableCourier->id;
+            $order->status = 'shipped'; // Auto-ship when courier assigned
+            $order->save();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Order dikonfirmasi dan kurir ' . $availableCourier->name . ' berhasil ditugaskan!');
+        }
+
         $order->update([
-            'status' => $request->status
+            'status' => $newStatus
         ]);
 
         return redirect()
@@ -91,17 +132,26 @@ class OrderController extends Controller
 public function assignCourier(Request $request, Order $order)
 {
     $request->validate([
-        'courier_id' => [
-            'required',
-            Rule::exists('users', 'id')->where(function ($q) {
-                $q->whereHas('role', fn ($r) =>
-                    $r->where('role_name', 'courier'));
-            }),
-        ]
+        'courier_id' => 'required|exists:users,id',
     ]);
 
-    if ($order->status !== 'confirmed') {
-        abort(400, 'Order belum dikonfirmasi');
+    // Verify the selected user is actually a courier
+    $courier = User::findOrFail($request->courier_id);
+    if ($courier->role->role_name !== 'courier') {
+        return back()->with('error', 'User yang dipilih bukan kurir!');
+    }
+
+    if ($order->status !== 'pending') {
+        return back()->with('error', 'Order harus berstatus pending untuk assign kurir!');
+    }
+
+    // If COD, courier advances payment to seller
+    if ($order->payment_method === 'cod') {
+        $seller = User::findOrFail($order->seller_id);
+        
+        // Courier advances payment to seller (balance can go negative)
+        $courier->decrement('balance', $order->total_price);
+        $seller->increment('balance', $order->total_price);
     }
 
     $order->update([

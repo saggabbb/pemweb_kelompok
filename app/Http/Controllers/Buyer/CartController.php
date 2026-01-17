@@ -79,63 +79,75 @@ class CartController extends Controller
         ]);
 
         $user = Auth::user();
-        $cartItems = Cart::where('user_id', $user->id)->with('product')->get();
+        $cartItems = Cart::where('user_id', $user->id)->with('product.seller')->get();
 
         if ($cartItems->isEmpty()) {
-            return back()->with('error', 'Keranjang kosong!');
+            return redirect()->route('buyer.cart.index')->with('error', 'Keranjang kosong!');
         }
 
-        // Group by Seller
-        $groupedItems = $cartItems->groupBy(function($item) {
-            return $item->product->seller_id;
-        });
+        DB::beginTransaction();
 
-        DB::transaction(function () use ($groupedItems, $user, $request) {
-            
-            foreach ($groupedItems as $sellerId => $items) {
-                $totalPrice = 0;
-                
-                // 1. Create Order Skeleton
+        try {
+            // Group cart items by seller
+            $ordersBySeller = $cartItems->groupBy('product.seller_id');
+
+            foreach ($ordersBySeller as $sellerId => $items) {
+                $totalPrice = $items->sum(fn($item) => $item->product->price * $item->quantity);
+                $shippingFee = 10000; // Flat shipping fee
+                $seller = $items->first()->product->seller;
+
+                // Create order for this seller
                 $order = Order::create([
-                    'buyer_id'       => $user->id,
-                    'seller_id'      => $sellerId,
-                    'order_date'     => now(),
-                    'total_price'    => 0,
-                    'status'         => 'pending',
+                    'buyer_id' => $user->id,
+                    'seller_id' => $sellerId,
+                    'courier_id' => null, // Will be assigned by admin later
+                    'order_date' => now(),
+                    'total_price' => $totalPrice,
+                    'shipping_fee' => $shippingFee,
+                    'status' => 'pending',
                     'payment_method' => $request->payment_method,
                 ]);
 
+                // Create order details
                 foreach ($items as $item) {
-                    $product = $item->product;
-                    
-                    // Stock Check
-                    if ($product->stock < $item->quantity) {
-                        throw new \Exception("Stok produk {$product->product_name} habis!");
-                    }
-
-                    // Decrement Stock
-                    $product->decrement('stock', $item->quantity);
-
-                    // Create Detail
-                    $subtotal = $product->price * $item->quantity;
-                    $order->details()->create([
-                        'product_id' => $product->id,
-                        'quantity'   => $item->quantity,
-                        'price'      => $product->price,
-                        'subtotal'   => $subtotal,
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        'product_id' => $item->product_id,
+                        'quantity' => $item->quantity,
+                        'price' => $item->product->price,
                     ]);
 
-                    $totalPrice += $subtotal;
+                    // Reduce stock
+                    $item->product->decrement('stock', $item->quantity);
                 }
 
-                // Update Total
-                $order->update(['total_price' => $totalPrice]);
+                // Handle balance transactions
+                if ($request->payment_method === 'transfer') {
+                    // Check buyer balance
+                    if ($user->balance < $totalPrice + $shippingFee) {
+                        throw new \Exception('Saldo tidak cukup! Saldo Anda: Rp ' . number_format($user->balance, 0, ',', '.') . ', Total: Rp ' . number_format($totalPrice + $shippingFee, 0, ',', '.'));
+                    }
+
+                    // Transfer: Buyer balance → Seller balance
+                    $user->decrement('balance', $totalPrice + $shippingFee);
+                    $seller->increment('balance', $totalPrice + $shippingFee);
+                    
+                } elseif ($request->payment_method === 'cod') {
+                    // COD: Courier will advance payment to seller when assigned by admin
+                    // Balance transaction happens in Admin\OrderController@assignCourier
+                }
             }
 
             // Clear Cart
             Cart::where('user_id', $user->id)->delete();
-        });
 
-        return redirect()->route('buyer.orders.index')->with('success', 'Checkout berhasil! Pesanan dibuat.');
+            DB::commit();
+
+            return redirect()->route('buyer.orders.index')->with('success', 'Checkout berhasil!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

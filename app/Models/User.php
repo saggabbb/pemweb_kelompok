@@ -32,21 +32,34 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    // sebagai seller
-    public function products()
-    {
-        return $this->hasMany(Product::class, 'seller_id');
-    }
-
     // sebagai buyer
     public function orders()
     {
         return $this->hasMany(Order::class, 'buyer_id');
     }
 
+    // sebagai seller
+    public function sellerOrders()
+    {
+        return $this->hasMany(Order::class, 'seller_id');
+    }
+
     // sebagai kurir
-    public function deliveries()
+    public function courierOrders()
     {
         return $this->hasMany(Order::class, 'courier_id');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

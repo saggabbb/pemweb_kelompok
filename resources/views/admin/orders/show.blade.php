@@ -13,61 +13,41 @@
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <h3 class="text-lg font-bold mb-4">Actions</h3>
 
-                        <!-- 1. Assign Courier -->
+                        <!-- 1. Confirm Order (Auto-assigns courier) -->
                         <div class="mb-6 border-b border-gray-200 dark:border-gray-700 pb-6">
-                            <h4 class="font-semibold mb-2">Assign Courier</h4>
-                            @if($order->courier)
-                                <p class="text-sm text-green-600 mb-2">Currently assigned to: <strong>{{ $order->courier->name }}</strong></p>
-                            @else
-                                <p class="text-sm text-yellow-600 mb-2">Not assigned yet.</p>
-                            @endif
-
-                            <form action="{{ route('admin.orders.assign-courier', $order) }}" method="POST">
-                                @csrf
-                                <div class="flex gap-2">
-                                    <select name="courier_id" class="rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 text-sm w-full">
-                                        <option value="">Select Courier...</option>
-                                        @foreach($couriers as $courier)
-                                            <option value="{{ $courier->id }}" {{ ($order->courier_id == $courier->id) ? 'selected' : '' }}>
-                                                {{ $courier->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 text-sm">
-                                        Assign
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                         <!-- 2. Confirm Payment -->
-                         @if($order->payment && $order->payment->status === 'pending')
-                            <div class="mb-6 border-b border-gray-200 dark:border-gray-700 pb-6">
-                                <h4 class="font-semibold mb-2">Payment Verification</h4>
-                                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded mb-2">
-                                    <p class="text-sm">Method: {{ $order->payment->payment_method }}</p>
-                                    @if($order->payment->payment_proof)
-                                        <a href="{{ Storage::url($order->payment->payment_proof) }}" target="_blank" class="text-indigo-600 text-sm underline">View Proof</a>
-                                    @else
-                                        <p class="text-sm text-red-500">No proof uploaded.</p>
-                                    @endif
-                                </div>
-                                <form action="{{ route('admin.orders.confirm-payment', $order) }}" method="POST">
+                            <h4 class="font-semibold mb-2">Confirm Order</h4>
+                            @if($order->status === 'pending')
+                                <p class="text-sm text-yellow-600 mb-3">Order pending confirmation. Click below to confirm and auto-assign courier.</p>
+                                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="w-full bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 text-sm">
-                                        Confirm Payment
+                                    @method('PATCH')
+                                    <input type="hidden" name="status" value="confirmed">
+                                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm w-full">
+                                        ✓ Confirm Order & Assign Courier
                                     </button>
                                 </form>
-                            </div>
-                        @elseif($order->payment && $order->payment->status === 'paid')
-                             <div class="mb-6 border-b border-gray-200 dark:border-gray-700 pb-6">
-                                <p class="text-green-600 font-bold">Payment Verified</p>
-                             </div>
-                        @else
-                             <div class="mb-6 border-b border-gray-200 dark:border-gray-700 pb-6">
-                                <p class="text-gray-500">No Payment record found or unknown status.</p>
-                             </div>
-                        @endif
+                            @elseif($order->courier_id)
+                                <!-- Courier Assigned -->
+                                <div class="bg-green-900 bg-opacity-30 border border-green-600 rounded p-4">
+                                    <div class="flex items-center mb-2">
+                                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span class="text-green-400 font-semibold">Order Confirmed & Courier Assigned!</span>
+                                    </div>
+                                    <div class="text-white">
+                                        <p class="text-sm text-gray-400 mb-1">Courier:</p>
+                                        <p class="font-bold">{{ $order->courier->name }}</p>
+                                        @if($order->courier->address)
+                                            <p class="text-sm text-gray-400 mt-2">{{ $order->courier->address }}</p>
+                                        @endif
+                                        <p class="text-sm text-gray-400 mt-2">Status: <span class="text-white font-semibold">{{ ucfirst($order->status) }}</span></p>
+                                    </div>
+                                </div>
+                            @else
+                                <p class="text-sm text-gray-500">Order confirmed but no courier available.</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -79,7 +59,14 @@
                             <p><span class="font-semibold">ID:</span> #{{ $order->id }}</p>
                             <p><span class="font-semibold">Buyer:</span> {{ $order->buyer->name }}</p>
                             <p><span class="font-semibold">Seller:</span> {{ $order->seller->name ?? 'Unknown' }}</p>
-                            <p><span class="font-semibold">Status:</span> {{ ucfirst($order->status) }}</p>
+                            <p><span class="font-semibold">Payment:</span> 
+                                <span class="{{  $order->payment_method === 'transfer' ? 'text-blue-500' : 'text-orange-500' }} font-semibold">
+                                    {{ strtoupper($order->payment_method) }}
+                                </span>
+                            </p>
+                            <p><span class="font-semibold">Status:</span> 
+                                <span class="text-yellow-500 font-semibold">{{ ucfirst($order->status) }}</span>
+                            </p>
                             <p><span class="font-semibold">Total:</span> Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
                          </div>
 
