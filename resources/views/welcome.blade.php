@@ -43,7 +43,7 @@
 
             <div class="space-y-4">
                 @auth
-                    <a href="{{ route('explore') }}" class="inline-block bg-blue-600 text-white px-8 py-3 rounded text-lg">
+                    <a href="{{ url('/explore') }}" class="inline-block bg-blue-600 text-white px-8 py-3 rounded text-lg">
                         Mulai Belanja (Ke Halaman Explore)
                     </a>
                 @else

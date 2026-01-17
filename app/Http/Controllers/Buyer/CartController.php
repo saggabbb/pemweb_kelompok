@@ -39,15 +39,21 @@ class CartController extends Controller
              return back()->with('error', 'Produk tidak mencukupi stok!');
         }
 
-        Cart::updateOrCreate(
-            [
+        $cartItem = Cart::where('user_id', Auth::id())
+            ->where('product_id', $request->product_id)
+            ->first();
+
+        if ($cartItem) {
+            // Already in cart, increment quantity
+            $cartItem->increment('quantity', $request->quantity);
+        } else {
+            // New item, create with specified quantity
+            Cart::create([
                 'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
-            ],
-            [
-                'quantity' => DB::raw('quantity + ' . $request->quantity)
-            ]
-        );
+                'quantity' => $request->quantity,
+            ]);
+        }
 
         return back()->with('success', 'Produk ditambahkan ke keranjang!');
     }
