@@ -59,8 +59,8 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             
-            <!-- Navigation with Hamburger Menu (All Devices) -->
-            <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <!-- Navigation with Hamburger Menu (All Devices) - Sticky -->
+            <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
                         <!-- Logo -->
                         <a href="{{ url('/') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">
