@@ -7,17 +7,9 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100">
-                
-                <!-- SEARCH BAR -->
-                <div class="mb-8 border-b border-gray-200 dark:border-gray-700 pb-6">
-                    <form action="{{ route('explore') }}" method="GET" class="flex gap-4">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search products..." class="flex-1 rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700">Search</button>
-                    </form>
-                </div>
-
-                @if(request('search'))
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    @if(request('search'))
                     <!-- SEARCH RESULTS -->
                     <h3 class="text-lg font-bold mb-4">Search Results for: "{{ request('search') }}"</h3>
                     @if($products->count() > 0)
