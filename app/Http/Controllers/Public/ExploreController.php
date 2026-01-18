@@ -12,7 +12,7 @@ class ExploreController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function index(Request $request)
+    public function __invoke(Request $request)
     {
         $search = $request->input('search');
         $categoryId = $request->input('category');
@@ -37,13 +37,23 @@ class ExploreController extends Controller
             
             return view('public.explore', [
                 'products' => $products,
-                ->get();
-
-            return view('public.explore', [
-                'mode' => 'categories',
-                'categories' => $categories
+                'mode' => 'search',
+                'search' => $search ?? 'category filter',
+                'categories' => Category::withCount('products')->get()
             ]);
         }
+
+        // Browse mode - show categories
+        $categories = Category::withCount('products')
+            ->with(['products' => function($query) {
+                $query->where('status', 'active')->limit(1);
+            }])
+            ->get();
+
+        return view('public.explore', [
+            'categories' => $categories,
+            'mode' => 'browse'
+        ]);
     }
 
     /**
