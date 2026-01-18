@@ -86,8 +86,10 @@ Route::middleware(['role:buyer'])
         Route::resource('orders', BuyerOrderController::class);
 
         // Cart
-        Route::resource('cart', CartController::class)->only(['index', 'store', 'update', 'destroy']);
-        Route::post('checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+        Route::get('/cart', [BuyerCartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/add', [BuyerCartController::class, 'store'])->name('cart.store');
+        Route::post('/cart/checkout', [BuyerCartController::class, 'checkout'])->name('cart.checkout');
+        Route::delete('/cart/{cart}', [BuyerCartController::class, 'destroy'])->name('cart.destroy');
     });
 
 Route::middleware(['role:admin'])
