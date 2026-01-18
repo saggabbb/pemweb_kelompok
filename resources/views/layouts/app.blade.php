@@ -67,7 +67,8 @@
                             Belantra.
                         </a>
 
-                        <!-- Search Bar (Browse Products) -->
+                        <!-- Search Bar (Browse Products) - Hidden on Homepage -->
+                        @if(!request()->is('/'))
                         <div class="flex-1 max-w-2xl mx-4">
                             <form action="{{ route('explore') }}" method="GET" class="relative">
                                 <div class="relative">
@@ -80,10 +81,11 @@
                                            name="search" 
                                            placeholder="Search products..." 
                                            value="{{ request('search') }}"
-                                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                                 </div>
                             </form>
                         </div>
+                        @endif
 
                         <!-- Hamburger Button (Always Visible) -->
                         <button onclick="toggleMobileMenu()" class="text-gray-700 dark:text-gray-300 focus:outline-none hover:text-indigo-600">
