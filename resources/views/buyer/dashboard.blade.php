@@ -1,12 +1,22 @@
 <x-app-layout>
+    <style>
+        body {
+        background-color: #f0f9ff !important; /* Warna blue-50 */
+    }
+    .min-h-screen {
+        background-color: #f0f9ff !important;
+    }
+
+    </style>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Buyer Dashboard') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="pt-6 pb-12">
+        <div class="py-12 bg-blue-50"> <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
             <!-- Welcome Section -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -22,27 +32,45 @@
                     </div>
                 </div>
             </div>
+            
             <!-- Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <div class="text-gray-900 dark:text-gray-100 font-bold text-xl">
-                        {{ $orders->count() }}
-                    </div>
-                    <div class="text-gray-500 dark:text-gray-400 text-sm">Total Orders</div>
-                </div>
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <div class="text-gray-900 dark:text-gray-100 font-bold text-xl">
-                        Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}
-                    </div>
-                    <div class="text-gray-500 dark:text-gray-400 text-sm">Total Spent</div>
-                </div>
-                <div class="bg-yellow-100 dark:bg-yellow-900 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <div class="text-yellow-900 dark:text-yellow-100 font-bold text-xl">
-                        Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}
-                    </div>
-                    <div class="text-yellow-700 dark:text-yellow-300 text-sm">Current Balance</div>
-                </div>
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="group bg-white dark:bg-gray-800 p-1 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 bg-gradient-to-br from-blue-500/10 to-transparent">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center">
+            <div class="p-4 bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-200 dark:shadow-none mr-4 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
             </div>
+            <div>
+                <p class="text-xs font-bold text-blue-500 uppercase tracking-widest">Total Pesanan</p>
+                <p class="text-3xl font-black text-gray-800 dark:text-white">{{ $orders->count() }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="group bg-white dark:bg-gray-800 p-1 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 bg-gradient-to-br from-emerald-500/10 to-transparent">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center">
+            <div class="p-4 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none mr-4 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-emerald-500 uppercase tracking-widest">Total Belanja</p>
+                <p class="text-3xl font-black text-gray-800 dark:text-white">Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="group bg-white dark:bg-gray-800 p-1 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 bg-gradient-to-br from-orange-500/10 to-transparent border border-orange-100 dark:border-orange-900/30">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center">
+            <div class="p-4 bg-orange-500 text-white rounded-xl shadow-lg shadow-orange-200 dark:shadow-none mr-4 group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-orange-600 uppercase tracking-widest">Saldo Aktif</p>
+                <p class="text-3xl font-black text-gray-800 dark:text-white">Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Recent Orders Snippet (Optional) -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
