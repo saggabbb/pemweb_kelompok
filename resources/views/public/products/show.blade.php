@@ -76,7 +76,7 @@
                             @auth
                                 @if(auth()->user()->role->role_name === 'buyer')
                                     @if($product->stock > 0)
-                                        <form action="{{ route('buyer.cart.add') }}" method="POST">
+                                        <form action="{{ route('buyer.cart.store') }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="product_id" value="{{ $product->id }}">
                                             
