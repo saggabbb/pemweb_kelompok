@@ -44,4 +44,12 @@ class ExploreController extends Controller
             ]);
         }
     }
+
+    /**
+     * Index method (alias for __invoke)
+     */
+    public function index(Request $request)
+    {
+        return $this->__invoke($request);
+    }
 }
