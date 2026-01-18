@@ -12,30 +12,31 @@ class ExploreController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
+        $categoryId = $request->input('category');
 
-        if ($search) {
-            // Logic SEARCH: Tampilkan Produk relevan
-            $products = Product::where('product_name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->with(['seller', 'category'])
-                ->latest()
-                ->paginate(12)
-                ->withQueryString();
+        if ($search || $categoryId) {
+            // Search or filter mode
+            $query = Product::with(['category', 'seller'])
+                ->where('status', 'active');
 
+            if ($search) {
+                $query->where('product_name', 'like', '%' . $search . '%')
+                      ->orWhereHas('category', function($q) use ($search) {
+                          $q->where('category_name', 'like', '%' . $search . '%');
+                      });
+            }
+
+            if ($categoryId) {
+                $query->where('category_id', $categoryId);
+            }
+
+            $products = $query->paginate(12);
+            
             return view('public.explore', [
-                'mode' => 'search',
                 'products' => $products,
-                'search' => $search
-            ]);
-        } else {
-            // Logic DEFAULT: Tampilkan Kategori dengan gambar sampul random dari produknya
-            $categories = Category::whereHas('products')
-                ->with(['products' => function($q) {
-                    $q->inRandomOrder()->limit(1); // Ambil 1 produk acak utk cover
-                }])
                 ->get();
 
             return view('public.explore', [
