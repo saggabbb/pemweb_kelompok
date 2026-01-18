@@ -81,13 +81,16 @@ Route::middleware(['role:buyer'])
     ->name('buyer.')
     ->group(function () {
         Route::get('/', [BuyerDashboard::class, 'index'])->name('dashboard');
+        Route::post('/topup', [BuyerDashboard::class, 'topup'])->name('topup');
         
         // Orders
         Route::resource('orders', BuyerOrderController::class);
 
         // Cart
-        Route::resource('cart', CartController::class)->only(['index', 'store', 'update', 'destroy']);
-        Route::post('checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+        Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/add', [CartController::class, 'store'])->name('cart.store');
+        Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+        Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
     });
 
 Route::middleware(['role:admin'])

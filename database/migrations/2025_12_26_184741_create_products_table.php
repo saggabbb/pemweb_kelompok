@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('price', 12, 2);
             $table->integer('stock');
             $table->text('description');
+            $table->string('image')->nullable();
             $table->string('status');
             $table->timestamps();
         });
