@@ -254,6 +254,7 @@
         </div>
 
         <script>
+            // Mobile Menu Toggle
             function toggleMobileMenu() {
                 const menu = document.getElementById('mobileMenu');
                 const overlay = document.getElementById('mobileMenuOverlay');
@@ -262,26 +263,36 @@
                 overlay.classList.toggle('active');
             }
 
-            // Theme Toggle Functionality
-            const themeToggle = document.getElementById('theme-toggle');
-            const htmlElement = document.documentElement;
-            
-            // Check for saved theme preference or default to light mode
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            if (currentTheme === 'dark') {
-                htmlElement.classList.add('dark');
-            }
-            
-            // Toggle theme on button click
-            if (themeToggle) {
-                themeToggle.addEventListener('click', function() {
-                    htmlElement.classList.toggle('dark');
-                    
-                    // Save preference
-                    const theme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
-                    localStorage.setItem('theme', theme);
-                });
-            }
+            // Theme Toggle - Run after DOM loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                const themeToggle = document.getElementById('theme-toggle');
+                const htmlElement = document.documentElement;
+                
+                // Check for saved theme preference or default to light mode
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                if (currentTheme === 'dark') {
+                    htmlElement.classList.add('dark');
+                }
+                
+                // Toggle theme on button click
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        htmlElement.classList.toggle('dark');
+                        
+                        // Save preference
+                        const theme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+                        localStorage.setItem('theme', theme);
+                        
+                        console.log('Theme toggled to:', theme);
+                    });
+                } else {
+                    console.error('Theme toggle button not found');
+                }
+            });
+
             // Close menu when clicking on a link
             document.querySelectorAll('#mobileMenu a').forEach(link => {
                 link.addEventListener('click', () => {
