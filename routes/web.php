@@ -46,6 +46,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/explore', [App\Http\Controllers\Public\ExploreController::class, 'index'])->name('explore');
+Route::get('/products/{product}', [App\Http\Controllers\Public\ProductController::class, 'show'])->name('products.show');
 
 Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
