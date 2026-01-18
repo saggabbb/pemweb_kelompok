@@ -32,7 +32,7 @@
                         <a href="{{ route('seller.orders.index') }}" class="text-indigo-600 hover:text-indigo-900 text-sm">View All</a>
                     </div>
                     
-                    @if($orders->count() > 0)
+                    @if($recentOrders->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead>
