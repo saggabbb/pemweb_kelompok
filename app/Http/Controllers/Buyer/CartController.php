@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +17,9 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = Cart::where('user_id', Auth::id())
-            ->with(['product.seller']) // Eager load seller functionality if needed
+            ->with(['product.seller']) 
             ->get();
             
-        // Group items by Seller (since we create 1 order per seller)
         $groupedItems = $cartItems->groupBy(function($item) {
             return $item->product->seller_id;
         });
@@ -37,7 +37,7 @@ class CartController extends Controller
         $product = Product::findOrFail($request->product_id);
 
         if ($product->stock < $request->quantity) {
-             return back()->with('error', 'Produk tidak mencukupi stok!');
+             return back()->with('error', 'Stok produk tidak mencukupi!');
         }
 
         $cartItem = Cart::where('user_id', Auth::id())
@@ -45,10 +45,8 @@ class CartController extends Controller
             ->first();
 
         if ($cartItem) {
-            // Already in cart, increment quantity
             $cartItem->increment('quantity', $request->quantity);
         } else {
-            // New item, create with specified quantity
             Cart::create([
                 'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
@@ -57,11 +55,6 @@ class CartController extends Controller
         }
 
         return back()->with('success', 'Produk ditambahkan ke keranjang!');
-    }
-
-    public function update(Request $request, Cart $cart)
-    {
-        // Add update logic if needed (qty change)
     }
 
     public function destroy(Cart $cart)
@@ -75,10 +68,6 @@ class CartController extends Controller
 
     public function checkout(Request $request)
     {
-        $request->validate([
-            'payment_method' => 'required|in:transfer,cod',
-        ]);
-
         $user = Auth::user();
         $cartItems = Cart::where('user_id', $user->id)->with('product.seller')->get();
 
@@ -89,66 +78,60 @@ class CartController extends Controller
         DB::beginTransaction();
 
         try {
-            // Group cart items by seller
+            // Kelompokkan belanjaan per Penjual
             $ordersBySeller = $cartItems->groupBy('product.seller_id');
 
             foreach ($ordersBySeller as $sellerId => $items) {
                 $totalPrice = $items->sum(fn($item) => $item->product->price * $item->quantity);
-                $shippingFee = 10000; // Flat shipping fee
-                $seller = $items->first()->product->seller;
+                $shippingFee = 10000; 
+                $grandTotal = $totalPrice + $shippingFee;
 
-                // Create order for this seller
-                $order = Order::create([
-                    'buyer_id' => $user->id,
-                    'seller_id' => $sellerId,
-                    'courier_id' => null, // Will be assigned by admin later
-                    'order_date' => now(),
-                    'total_price' => $totalPrice,
-                    'shipping_fee' => $shippingFee,
-                    'status' => 'pending',
-                    'payment_method' => $request->payment_method,
-                ]);
+                // --- 1. POTONG SALDO BUYER ---
+                if ($user->balance < $grandTotal) {
+                    throw new \Exception('Saldo tidak cukup! Saldo Anda: Rp ' . number_format($user->balance));
+                }
+                $user->decrement('balance', $grandTotal);
 
-                // Create order details
-                foreach ($items as $item) {
-                    OrderDetail::create([
-                        'order_id' => $order->id,
-                        'product_id' => $item->product_id,
-                        'quantity' => $item->quantity,
-                        'price' => $item->product->price,
-                    ]);
-
-                    // Reduce stock
-                    $item->product->decrement('stock', $item->quantity);
+                // --- 2. TAMBAH SALDO SELLER ---
+                $sellerUser = User::find($sellerId);
+                if ($sellerUser) {
+                    $sellerUser->increment('balance', $totalPrice);
                 }
 
-                // Handle balance transactions
-                if ($request->payment_method === 'transfer') {
-                    // Check buyer balance
-                    if ($user->balance < $totalPrice + $shippingFee) {
-                        throw new \Exception('Saldo tidak cukup! Saldo Anda: Rp ' . number_format($user->balance, 0, ',', '.') . ', Total: Rp ' . number_format($totalPrice + $shippingFee, 0, ',', '.'));
-                    }
+                // --- 3. SIMPAN DATA ORDER ---
+                $order = Order::create([
+                    'buyer_id'       => $user->id, // Ganti dari user_id ke buyer_id
+                    'seller_id'      => $sellerId,
+                    'total_price'    => $grandTotal,
+                    'payment_method' => $request->payment_method ?? 'transfer',
+                    'status'         => 'processing',
+                    'order_date'     => now(), // Tambahkan ini untuk mengisi order_date
+                ]);
+                
+                // --- 4. SIMPAN DETAIL & KURANGI STOK ---
+                foreach ($items as $item) {
+                    OrderDetail::create([
+                        'order_id'   => $order->id,
+                        'product_id' => $item->product_id,
+                        'quantity'   => $item->quantity,
+                        'price'      => $item->product->price,
+                        'subtotal'   => $item->quantity * $item->product->price,
+                    ]);
 
-                    // Transfer: Buyer balance → Seller balance
-                    $user->decrement('balance', $totalPrice + $shippingFee);
-                    $seller->increment('balance', $totalPrice + $shippingFee);
-                    
-                } elseif ($request->payment_method === 'cod') {
-                    // COD: Courier will advance payment to seller when assigned by admin
-                    // Balance transaction happens in Admin\OrderController@assignCourier
+                    // Stok 52 jadi 50
+                    $item->product->decrement('stock', $item->quantity);
                 }
             }
 
-            // Clear Cart
+            // Kosongkan Keranjang
             Cart::where('user_id', $user->id)->delete();
 
             DB::commit();
-
-            return redirect()->route('buyer.orders.index')->with('success', 'Checkout berhasil!');
+            return redirect()->route('buyer.dashboard')->with('success', 'Checkout Berhasil! Saldo Rp 5jt Anda telah terpotong.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+            return redirect()->route('buyer.cart.index')->with('error', $e->getMessage());
         }
     }
 }

@@ -51,10 +51,6 @@ Route::get('/products/{product}', [App\Http\Controllers\Public\ProductController
 Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
 
-Route::middleware(['role:admin'])
-    ->get('/admin', [AdminDashboard::class, 'index'])
-    ->name('admin.dashboard');
-
 Route::middleware(['role:seller'])
     ->get('/seller', [SellerDashboard::class, 'index'])
     ->name('seller.dashboard');
@@ -87,9 +83,9 @@ Route::middleware(['role:buyer'])
         Route::resource('orders', BuyerOrderController::class);
 
         // Cart
+        Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
         Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
         Route::post('/cart/add', [CartController::class, 'store'])->name('cart.store');
-        Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
         Route::delete('/cart/{cart}', [CartController::class, 'destroy'])->name('cart.destroy');
     });
 

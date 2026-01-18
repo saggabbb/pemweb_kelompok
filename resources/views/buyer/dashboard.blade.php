@@ -1,5 +1,5 @@
 <x-app-layout>
-<<<<<<< HEAD
+
     <style>
         body {
         background-color: #f0f9ff !important; /* Warna blue-50 */
@@ -72,24 +72,34 @@
         </div>
     </div>
 </div>
-=======
-    <div x-data="{ showTopUp: false }">
-        <x-slot name="header">
-            <h2 class="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 leading-tight">
-                {{ __('Buyer Dashboard') }}
-            </h2>
-        </x-slot>
 
-        <div class="py-12">
-            @if(session('success'))
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-6">
-                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                        <strong class="font-bold">Success!</strong>
-                        <span class="block sm:inline">{{ session('success') }}</span>
-                    </div>
+    <div class="bg-white overflow-hidden shadow-xl sm:rounded-3xl p-6 mb-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <p class="text-sm font-medium text-indigo-600 uppercase tracking-wider">Active Balance</p>
+            <h3 class="text-3xl font-bold text-gray-900">Rp {{ number_format($user->balance, 0, ',', '.') }}</h3>
+        </div>
+        <button @click="showTopUp = !showTopUp" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-xl font-bold transition-all shadow-lg shadow-indigo-200">
+            + Top Up
+        </button>
+    </div>
+
+    <div x-show="showTopUp" x-transition class="mt-6 pt-6 border-t border-gray-100">
+        <form action="{{ route('buyer.topup') }}" method="POST">
+            @csrf
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-grow">
+                    <span class="absolute left-4 top-2.5 text-gray-400">Rp</span>
+                    <input type="number" name="amount" min="10000" placeholder="Minimal 10.000" 
+                        class="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-indigo-500" required>
                 </div>
-            @endif
->>>>>>> c648b59062f416b64497ff2d5a2d263075fde891
+                <button type="submit" class="bg-gray-900 text-white px-8 py-2 rounded-xl font-bold hover:bg-black transition-all">
+                    Confirm Payment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
                 

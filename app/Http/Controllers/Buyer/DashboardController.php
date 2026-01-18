@@ -22,15 +22,12 @@ class DashboardController extends Controller
         // Hitung Statistik
         $totalOrders = $orders->count();
         
-        // Menghitung total belanja hanya dari order yang statusnya 'completed' atau 'success'
-        // Sesuaikan 'completed' dengan nama status di database kamu
+        // Menghitung total belanja hanya dari order yang statusnya 'completed'
+        // Cek kembali di database apakah statusnya 'completed' atau 'success'
         $totalSpent = $orders->where('status', 'completed')->sum('total_price');
 
         return view('buyer.dashboard', compact('orders', 'totalOrders', 'totalSpent', 'user'));
     }
-<<<<<<< HEAD
-}
-=======
 
     public function topup(Request $request)
     {
@@ -39,10 +36,10 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
+        // Sesuai permintaan temanmu, pastikan logika saldo benar
         $user->balance += $request->amount;
         $user->save();
 
         return redirect()->back()->with('success', 'Balance topped up successfully! Rp ' . number_format($request->amount, 0, ',', '.'));
     }
 }
->>>>>>> c648b59062f416b64497ff2d5a2d263075fde891
