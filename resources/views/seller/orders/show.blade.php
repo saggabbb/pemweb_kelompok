@@ -60,6 +60,93 @@
                                 </div>
                             </div>
                         @endif
+
+                        @if($order->status === 'completed')
+                            <!-- Order Completed Display -->
+                            <div class="p-6 bg-green-50 dark:bg-green-900 border-2 border-green-500 dark:border-green-600 rounded-lg text-center">
+                                <div class="flex justify-center mb-4">
+                                    <svg class="w-20 h-20 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-2xl font-bold text-green-700 dark:text-green-300 mb-2">
+                                    ✓ Pesanan Selesai
+                                </h4>
+                                <p class="text-green-800 dark:text-green-200 mb-4">
+                                    Produk telah berhasil sampai ke penerima!
+                                </p>
+                                <div class="bg-white dark:bg-gray-800 rounded-lg p-4 mt-4">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Completed on:</p>
+                                    <p class="text-lg font-semibold">{{ $order->updated_at->format('d M Y, H:i') }}</p>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Current Status Display -->
+                            <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Current Status:</p>
+                                <p class="text-xl font-bold {{ match($order->status) {
+                                    'completed' => 'text-green-600',
+                                    'confirmed' => 'text-blue-600',
+                                    'shipped' => 'text-indigo-600',
+                                    'pending' => 'text-yellow-600',
+                                    'cancelled' => 'text-red-600',
+                                    default => 'text-gray-600'
+                                } }}">
+                                    {{ ucfirst($order->status) }}
+                                </p>
+                            </div>
+
+                            <!-- Handover Button for Confirmed Orders -->
+                            @if($order->status === 'confirmed' && $order->courier_id)
+                                <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-900 border border-blue-300 dark:border-blue-700 rounded-lg">
+                                    <p class="text-sm text-blue-800 dark:text-blue-200 mb-3">
+                                        ✓ Kurir sudah ditugaskan. Klik tombol di bawah setelah menyerahkan barang ke kurir.
+                                    </p>
+                                    <form action="{{ route('seller.orders.handover', $order) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-semibold">
+                                            📦 Serahkan ke Kurir
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+
+                            <!-- Status Update Form -->
+                            <form action="{{ route('seller.orders.update', $order) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                
+                                <div class="mb-4">
+                                    <label for="status" class="block text-sm font-medium mb-2">Change Order Status</label>
+                                    <select name="status" id="status" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-900">
+                                        <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
+                                        <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Shipped</option>
+                                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold">
+                                    Update Status
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-lg font-bold mb-4">Update Status</h3>
+                        
+                        <!-- Success Message (if just updated) -->
+                        @if(session('success'))
+                            <div class="mb-4 p-4 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <svg class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <p class="text-green-800 dark:text-green-200 font-semibold">{{ session('success') }}</p>
+                                </div>
+                            </div>
+                        @endif
                         
                         <!-- Current Status Display -->
                         <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
