@@ -22,6 +22,27 @@
                     </div>
                 </div>
             </div>
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="text-gray-900 dark:text-gray-100 font-bold text-xl">
+                        {{ $orders->count() }}
+                    </div>
+                    <div class="text-gray-500 dark:text-gray-400 text-sm">Total Orders</div>
+                </div>
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="text-gray-900 dark:text-gray-100 font-bold text-xl">
+                        Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}
+                    </div>
+                    <div class="text-gray-500 dark:text-gray-400 text-sm">Total Spent</div>
+                </div>
+                <div class="bg-yellow-100 dark:bg-yellow-900 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div class="text-yellow-900 dark:text-yellow-100 font-bold text-xl">
+                        Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}
+                    </div>
+                    <div class="text-yellow-700 dark:text-yellow-300 text-sm">Current Balance</div>
+                </div>
+            </div>
 
             <!-- Recent Orders Snippet (Optional) -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
