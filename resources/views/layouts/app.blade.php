@@ -61,10 +61,9 @@
             
             <!-- Navigation with Hamburger Menu (All Devices) -->
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between items-center h-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
                         <!-- Logo -->
-                        <a href="{{ url('/dashboard') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                        <a href="{{ url('/') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">
                             Belantra.
                         </a>
 
