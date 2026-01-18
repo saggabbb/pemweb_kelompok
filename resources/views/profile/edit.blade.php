@@ -1,152 +1,126 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Edit Profile') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-12 bg-blue-50 dark:bg-gray-900 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            <!-- Success Message -->
-            @if(session('success'))
-                <div class="mb-6 bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-700 text-green-800 dark:text-green-200 px-4 py-3 rounded">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <!-- Profile Information -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Profile Information</h3>
-                    
-                    <form method="POST" action="{{ route('profile.update') }}">
-                        @csrf
-                        @method('PATCH')
-
-                        <!-- Name -->
-                        <div class="mb-4">
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Name
-                            </label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100" 
-                                required>
-                            @error('name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Email -->
-                        <div class="mb-4">
-                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Email
-                            </label>
-                            <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100" 
-                                required>
-                            @error('email')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Address -->
-                        <div class="mb-4">
-                            <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Address
-                            </label>
-                            <textarea name="address" id="address" rows="3" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100">{{ old('address', $user->address) }}</textarea>
-                            @error('address')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Role (Read-only) -->
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Role
-                            </label>
-                            <div class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-800 dark:text-gray-200 capitalize">
-                                {{ $user->role->role_name }}
-                            </div>
-                        </div>
-
-                        <!-- Balance (Read-only) -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Current Balance
-                            </label>
-                            <div class="px-4 py-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg text-yellow-900 dark:text-yellow-100 font-semibold">
-                                Rp {{ number_format($user->balance, 0, ',', '.') }}
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold">
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
+            <div class="mb-10">
+                <h2 class="text-3xl font-black text-gray-900 tracking-tight">Profil Information</h2>
+                <p class="text-gray-500">Update your personal details and security settings.</p>
             </div>
 
-            <!-- Change Password -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Change Password</h3>
+            <div class="flex flex-col md:flex-row gap-8">
+                
+                <div class="w-full md:w-1/3 space-y-6">
+                    <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="h-14 w-14 bg-indigo-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                {{ substr($user->name, 0, 1) }}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900">{{ $user->name }}</h4>
+                                <span class="text-xs font-bold text-indigo-600 uppercase">{{ $user->role->role_name }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <div class="inline-block px-2 py-0.5 bg-indigo-600 rounded-md mb-2">
+                                    <p class="text-[10px] font-black text-white uppercase tracking-widest">Active Balance</p>
+                                </div>
+                                <p class="text-xl font-bold text-gray-900 leading-none">Rp {{ number_format($user->balance, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:block p-4">
+                        <p class="text-sm text-gray-400">Pastikan data yang kamu masukkan valid untuk keperluan transaksi di Belantra.</p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3 space-y-8">
                     
-                    <form method="POST" action="{{ route('profile.update') }}">
-                        @csrf
-                        @method('PATCH')
-
-                        <!-- Hidden fields to preserve other data -->
-                        <input type="hidden" name="name" value="{{ $user->name }}">
-                        <input type="hidden" name="email" value="{{ $user->email }}">
-                        <input type="hidden" name="address" value="{{ $user->address }}">
-
-                        <!-- Current Password -->
-                        <div class="mb-4">
-                            <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Current Password
-                            </label>
-                            <input type="password" name="current_password" id="current_password" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                            @error('current_password')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="px-8 py-5 border-b border-gray-100 font-bold text-gray-800 bg-gray-50/50 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            General Information
                         </div>
+                        <div class="p-8">
+                            <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
+                                @csrf
+                                @method('PATCH')
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 block">Full Name</label>
+                                        <input type="text" name="name" value="{{ old('name', $user->name) }}" 
+                                            class="w-full border-gray-200 rounded-xl bg-gray-100 focus:bg-white focus:ring-indigo-500 focus:border-indigo-500 transition-all px-4 py-3">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 block">Email Address</label>
+                                        <input type="email" name="email" value="{{ old('email', $user->email) }}" 
+                                            class="w-full border-gray-200 rounded-xl bg-gray-100 focus:bg-white focus:ring-indigo-500 focus:border-indigo-500 transition-all px-4 py-3">
+                                    </div>
+                                </div>
 
-                        <!-- New Password -->
-                        <div class="mb-4">
-                            <label for="new_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                New Password
-                            </label>
-                            <input type="password" name="new_password" id="new_password" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100">
-                            @error('new_password')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 block">Home Address</label>
+                                    <textarea name="address" rows="3" 
+                                        class="w-full border-gray-200 rounded-xl bg-gray-100 focus:bg-white focus:ring-indigo-500 focus:border-indigo-500 transition-all px-4 py-3">{{ old('address', $user->address) }}</textarea>
+                                </div>
 
-                        <!-- Confirm New Password -->
-                        <div class="mb-6">
-                            <label for="new_password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Confirm New Password
-                            </label>
-                            <input type="password" name="new_password_confirmation" id="new_password_confirmation" 
-                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100">
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-gray-900 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-black transition-all shadow-md">
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </form>
                         </div>
+                    </div>
 
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-semibold">
-                                Update Password
-                            </button>
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div class="px-8 py-5 border-b border-gray-100 font-bold text-gray-800 bg-gray-50/50 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Security Settings
                         </div>
-                    </form>
+                        <div class="p-8">
+                            <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="name" value="{{ $user->name }}">
+                                <input type="hidden" name="email" value="{{ $user->email }}">
+                                <input type="hidden" name="address" value="{{ $user->address }}">
+
+                                <div>
+                                    <label class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 block">Current Password</label>
+                                    <input type="password" name="current_password" 
+                                        class="w-full border-gray-200 rounded-xl bg-gray-100 focus:bg-white focus:ring-red-500 focus:border-red-500 transition-all px-4 py-3">
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 block">New Password</label>
+                                        <input type="password" name="new_password" 
+                                            class="w-full border-gray-200 rounded-xl bg-gray-100 focus:bg-white focus:ring-indigo-500 focus:border-indigo-500 transition-all px-4 py-3">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 block">Confirm New Password</label>
+                                        <input type="password" name="new_password_confirmation" 
+                                            class="w-full border-gray-200 rounded-xl bg-gray-100 focus:bg-white focus:ring-indigo-500 focus:border-indigo-500 transition-all px-4 py-3">
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2 text-indigo-600 font-bold">
+                                    <button type="submit">Update Password →</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
         </div>
     </div>
 </x-app-layout>
