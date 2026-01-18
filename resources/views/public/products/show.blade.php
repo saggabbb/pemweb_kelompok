@@ -39,63 +39,82 @@
                         </div>
 
                         <!-- Product Info -->
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                                {{ $product->product_name }}
-                            </h1>
-
-                            <div class="mb-4">
-                                <span class="inline-block bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-3 py-1 rounded-full text-sm">
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Category Badge -->
+                            <div class="absolute top-4 left-4">
+                                <span class="inline-flex items-center px-4 py-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-full text-sm font-semibold text-indigo-600 dark:text-indigo-400 shadow-lg">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                    </svg>
                                     {{ $product->category->category_name }}
                                 </span>
                             </div>
 
-                            <div class="mb-6">
-                                <span class="text-4xl font-bold text-indigo-600 dark:text-indigo-400">
+                            <!-- Stock Badge -->
+                            @if($product->stock > 0 && $product->stock < 10)
+                                <div class="absolute top-4 right-4">
+                                    <span class="inline-flex items-center px-4 py-2 bg-red-500/95 backdrop-blur-sm rounded-full text-sm font-semibold text-white shadow-lg animate-pulse">
+                                        🔥 Only {{ $product->stock }} left!
+                                    </span>
+                                </div>
+                            @elseif($product->stock == 0)
+                                <div class="absolute top-4 right-4">
+                                    <span class="inline-flex items-center px-4 py-2 bg-gray-500/95 backdrop-blur-sm rounded-full text-sm font-semibold text-white shadow-lg">
+                                        Out of Stock
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="flex flex-col">
+                        <div class="flex-1">
+                            <!-- Product Name -->
+                            <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">
+                                {{ $product->product_name }}
+                            </h1>
+
+                            <!-- Seller Info -->
+                            <div class="flex items-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Sold by</p>
+                                    <p class="font-semibold text-gray-900 dark:text-white">{{ $product->seller->name }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="mb-8">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Price</p>
+                                <p class="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
                                     Rp {{ number_format($product->price, 0, ',', '.') }}
-                                </span>
+                                </p>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-8">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Product Details
+                                </h3>
+                                <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                                    {{ $product->description }}
+                                </p>
                             </div>
 
                             <!-- Stock Info -->
-                            <div class="mb-6">
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Stock Available:</p>
-                                <p class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ $product->stock }} units
-                                </p>
-                            </div>
-
-                            <!-- Seller Info -->
-                            <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Sold by:</p>
-                                <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ $product->seller->name }}
-                                </p>
-                            </div>
-
-                            <!-- Add to Cart Form -->
-                            @auth
-                                @if(auth()->user()->role->role_name === 'buyer')
-                                    @if($product->stock > 0)
-                                        <form action="{{ route('buyer.cart.store') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            
-                                            <div class="mb-6">
-                                                <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                                    Quantity
-                                                </label>
-                                                <div class="flex items-center gap-4">
-                                                    <input type="number" 
-                                                           id="quantity" 
-                                                           name="quantity" 
-                                                           min="1" 
-                                                           max="{{ $product->stock }}" 
-                                                           value="1" 
-                                                           class="w-32 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-900 dark:text-gray-100"
-                                                           required>
-                                                    <span class="text-sm text-gray-500">/ {{ $product->stock }} available</span>
-                                                </div>
-                                                @error('quantity')
                                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                                 @enderror
                                             </div>
