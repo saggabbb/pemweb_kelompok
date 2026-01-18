@@ -49,14 +49,14 @@ class RealisticProductSeeder extends Seeder
         ];
 
         $sellerUsers = [];
-        foreach ($sellers as $seller) {
+        foreach ($sellers as $sellerData) {
             $sellerUsers[] = User::create([
-                'name' => $seller['name'],
-                'email' => $seller['email'],
+                'name' => $sellerData['name'],
+                'email' => $sellerData['email'],
                 'password' => Hash::make('password123'),
                 'role_id' => $sellerRole->id,
                 'balance' => rand(5000000, 20000000),
-                'address' => $seller['address'],
+                'address' => $sellerData['address'],
             ]);
         }
 
