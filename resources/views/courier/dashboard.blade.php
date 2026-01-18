@@ -13,11 +13,11 @@
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                         <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg">
-                            <div class="font-bold text-xl">{{ $orders->where('status', 'shipped')->count() }}</div>
+                            <div class="font-bold text-xl">{{ $pendingDeliveries }}</div>
                             <div class="text-sm">Pending Delivery</div>
                         </div>
                          <div class="bg-green-100 dark:bg-green-900 p-4 rounded-lg">
-                            <div class="font-bold text-xl">{{ $orders->where('status', 'delivered')->count() }}</div>
+                            <div class="font-bold text-xl">{{ $completedDeliveries }}</div>
                             <div class="text-sm">Delivered</div>
                         </div>
                     </div>
