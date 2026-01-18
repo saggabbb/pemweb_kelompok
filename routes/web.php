@@ -39,9 +39,8 @@ Route::get('/dashboard', function () {
     };
 })->middleware(['auth'])->name('dashboard');
 
-// The original explore route was:
-// Route::middleware(['auth'])->get('/explore', \App\Http\Controllers\Public\ExploreController::class)->name('explore');
-// It has been replaced by the public one above.
+
+Route::get('/explore', [App\Http\Controllers\Public\ExploreController::class, 'index'])->name('explore');
 
 Route::get('/auth/{provider}', [\App\Http\Controllers\Auth\SocialiteController::class, 'redirect'])->name('social.redirect');
 Route::get('/auth/{provider}/callback', [\App\Http\Controllers\Auth\SocialiteController::class, 'callback'])->name('social.callback');
