@@ -48,13 +48,19 @@
                         @foreach($products as $product)
                             <a href="{{ route('products.show', $product) }}" class="group">
                                 <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700">
-                                    {{-- Product Image --}}
-                                    <div class="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
-                                        @if($product->image)
-                                            <img src="{{ Storage::url($product->image) }}" 
-                                                 alt="{{ $product->product_name }}" 
-                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                        @else
+                                    {{-- Product Image --}}\r
+                                    <div class=\"relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden\">\r
+                                        @if($product->image)\r
+                                            @php\r
+                                                // Check if it's a URL or storage path\r
+                                                $productImageUrl = (strpos($product->image, 'http') === 0) \r
+                                                    ? $product->image \r
+                                                    : Storage::url($product->image);\r
+                                            @endphp\r
+                                            <img src=\"{{ $productImageUrl }}\" \r
+                                                 alt=\"{{ $product->product_name }}\" \r
+                                                 class=\"w-full h-full object-cover group-hover:scale-110 transition-transform duration-500\">\r
+                                        @else\r
                                             <div class="w-full h-full flex items-center justify-center">
                                                 <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -137,7 +143,13 @@
                                 {{-- Category Cover Image --}}
                                 <div class="relative h-64 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 overflow-hidden">
                                     @if($coverProduct && $coverProduct->image)
-                                        <img src="{{ Storage::url($coverProduct->image) }}" 
+                                        @php
+                                            // Check if it's a URL or storage path
+                                            $coverImageUrl = (strpos($coverProduct->image, 'http') === 0) 
+                                                ? $coverProduct->image 
+                                                : Storage::url($coverProduct->image);
+                                        @endphp
+                                        <img src="{{ $coverImageUrl }}" 
                                              alt="{{ $category->category_name }} cover" 
                                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                     @else
