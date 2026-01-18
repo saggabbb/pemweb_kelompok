@@ -76,11 +76,59 @@ class OrderController extends Controller
             'status' => 'required|in:processing,shipped,cancelled',
         ]);
 
+        // If cancelling, delete order and rollback balance
+        if ($request->status === 'cancelled') {
+            return $this->cancelAndDelete($order);
+        }
+
         $order->status = $request->status;
         $order->save();
 
         return redirect()
             ->route('seller.orders.show', $order)
             ->with('success', 'Status order berhasil diperbarui');
+    }
+
+    /**
+     * Cancel order and delete it, rollback balance if needed
+     */
+    private function cancelAndDelete(Order $order)
+    {
+        // Rollback balance if transfer payment already processed
+        if ($order->payment_method === 'transfer') {
+            $buyer = $order->buyer;
+            $seller = $order->seller;
+            
+            // Return money to buyer, deduct from seller
+            $buyer->increment('balance', $order->total_price);
+            $seller->decrement('balance', $order->total_price);
+        }
+        
+        // Rollback balance if COD and courier already advanced payment
+        if ($order->payment_method === 'cod' && $order->courier_id) {
+            $courier = $order->courier;
+            $seller = $order->seller;
+            
+            // Return money to courier, deduct from seller
+            $courier->increment('balance', $order->total_price);
+            $seller->decrement('balance', $order->total_price);
+        }
+
+        // Restore product stock
+        foreach ($order->details as $detail) {
+            if ($detail->product) {
+                $detail->product->increment('stock', $detail->quantity);
+            }
+        }
+
+        // Delete order details first (foreign key)
+        $order->details()->delete();
+        
+        // Delete order
+        $order->delete();
+
+        return redirect()
+            ->route('seller.orders.index')
+            ->with('success', 'Order berhasil dibatalkan dan dihapus!');
     }
 }
