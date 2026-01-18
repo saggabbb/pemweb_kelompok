@@ -11,14 +11,14 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <div class="text-gray-900 dark:text-gray-100 font-bold text-xl">
-                        {{ $orders->count() }}
+                        {{ $totalOrders }}
                     </div>
                     <div class="text-gray-500 dark:text-gray-400 text-sm">Total Orders</div>
                 </div>
                 <!-- Mockup Stats as we don't have variables passed for these yet -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <div class="text-gray-900 dark:text-gray-100 font-bold text-xl">
-                        Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}
+                        Rp {{ number_format($totalRevenue, 0, ',', '.') }}
                     </div>
                     <div class="text-gray-500 dark:text-gray-400 text-sm">Total Revenue</div>
                 </div>
@@ -46,7 +46,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    @foreach($orders->take(5) as $order)
+                                    @foreach($recentOrders->take(5) as $order)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">#{{ $order->id }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->buyer->name }}</td>
