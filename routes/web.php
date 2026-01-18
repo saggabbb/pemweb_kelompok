@@ -81,6 +81,7 @@ Route::middleware(['role:buyer'])
     ->name('buyer.')
     ->group(function () {
         Route::get('/', [BuyerDashboard::class, 'index'])->name('dashboard');
+        Route::post('/topup', [BuyerDashboard::class, 'topup'])->name('topup');
         
         // Orders
         Route::resource('orders', BuyerOrderController::class);

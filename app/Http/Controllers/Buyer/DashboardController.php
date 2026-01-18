@@ -19,4 +19,17 @@ class DashboardController extends Controller
 
         return view('buyer.dashboard', compact('orders'));
     }
+
+    public function topup(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:10000',
+        ]);
+
+        $user = Auth::user();
+        $user->balance += $request->amount;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Balance topped up successfully! Rp ' . number_format($request->amount, 0, ',', '.'));
+    }
 }
