@@ -1,0 +1,69 @@
+<x-guest-layout>
+    <h2 class="text-xl font-bold mb-4">Register</h2>
+
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
+
+        <!-- Name -->
+        <div class="mb-4">
+            <label for="name" class="block font-medium text-sm text-gray-700">Name</label>
+            <input id="name" class="block mt-1 w-full border p-2 rounded" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" />
+            <x-input-error :messages="$errors->get('name')" class="mt-2 text-red-500" />
+        </div>
+
+        <!-- Email Address -->
+        <div class="mb-4">
+            <label for="email" class="block font-medium text-sm text-gray-700">Email</label>
+            <input id="email" class="block mt-1 w-full border p-2 rounded" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500" />
+        </div>
+
+        <!-- Role Selection -->
+        <div class="mb-4">
+            <label for="role_id" class="block font-medium text-sm text-gray-700">Register as</label>
+            <select id="role_id" name="role_id" class="block mt-1 w-full border p-2 rounded border-gray-300">
+                @foreach($roles as $role)
+                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                        {{ ucfirst($role->role_name) }} 
+                        @if($role->role_name === 'buyer') (Pembeli)
+                        @elseif($role->role_name === 'seller') (Penjual)
+                        @elseif($role->role_name === 'courier') (Kurir)
+                        @endif
+                    </option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('role_id')" class="mt-2 text-red-500" />
+        </div>
+
+        <!-- Address -->
+        <div class="mb-4">
+            <label for="address" class="block font-medium text-sm text-gray-700">Address</label>
+            <textarea id="address" name="address" rows="3" class="block mt-1 w-full border p-2 rounded border-gray-300" placeholder="Masukkan alamat lengkap Anda" required></textarea>
+            <x-input-error :messages="$errors->get('address')" class="mt-2 text-red-500" />
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4">
+            <label for="password" class="block font-medium text-sm text-gray-700">Password</label>
+            <input id="password" class="block mt-1 w-full border p-2 rounded" type="password" name="password" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2 text-red-500" />
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mb-4">
+            <label for="password_confirmation" class="block font-medium text-sm text-gray-700">Confirm Password</label>
+            <input id="password_confirmation" class="block mt-1 w-full border p-2 rounded" type="password" name="password_confirmation" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2 text-red-500" />
+        </div>
+
+        <div class="flex items-center justify-end mt-4 gap-4">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('login') }}">
+                Already registered?
+            </a>
+
+            <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded">
+                Register
+            </button>
+        </div>
+    </form>
+</x-guest-layout>
