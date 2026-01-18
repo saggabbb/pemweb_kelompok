@@ -20,6 +20,10 @@
                             <div class="font-bold text-xl">{{ $completedDeliveries }}</div>
                             <div class="text-sm">Delivered</div>
                         </div>
+                        <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg">
+                            <div class="font-bold text-xl">Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}</div>
+                            <div class="text-sm">Current Balance</div>
+                        </div>
                     </div>
 
                     <a href="{{ url('courier/orders') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
