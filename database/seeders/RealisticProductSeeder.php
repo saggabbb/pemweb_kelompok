@@ -7,59 +7,23 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Role;
-use Illuminate\Support\Facades\Hash;
 
 class RealisticProductSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get seller role
+        // Get existing sellers (already created by UserSeeder)
         $sellerRole = Role::where('role_name', 'seller')->first();
+        $sellerUsers = User::where('role_id', $sellerRole->id)->get();
+        
+        if ($sellerUsers->count() === 0) {
+            $this->command->error('❌ No sellers found! Please run UserSeeder first.');
+            return;
+        }
         
         // Get all categories
         $categories = Category::all();
         
-        // Create sellers with realistic data
-        $sellers = [
-            [
-                'name' => 'Toko Elektronik Jaya',
-                'email' => 'elektronik@belantra.com',
-                'address' => 'Jl. Mangga Dua No. 123, Jakarta Pusat',
-            ],
-            [
-                'name' => 'Fashion Store Indo',
-                'email' => 'fashion@belantra.com',
-                'address' => 'Jl. Thamrin City No. 45, Jakarta Pusat',
-            ],
-            [
-                'name' => 'Rumah Furniture',
-                'email' => 'furniture@belantra.com',
-                'address' => 'Jl. Pramuka Raya No. 78, Jakarta Timur',
-            ],
-            [
-                'name' => 'Toko Buku Gramedia',
-                'email' => 'buku@belantra.com',
-                'address' => 'Jl. Sudirman No. 56, Jakarta Selatan',
-            ],
-            [
-                'name' => 'Sport Station',
-                'email' => 'sport@belantra.com',
-                'address' => 'Jl. Senayan No. 12, Jakarta Selatan',
-            ],
-        ];
-
-        $sellerUsers = [];
-        foreach ($sellers as $sellerData) {
-            $sellerUsers[] = User::create([
-                'name' => $sellerData['name'],
-                'email' => $sellerData['email'],
-                'password' => Hash::make('password123'),
-                'role_id' => $sellerRole->id,
-                'balance' => rand(5000000, 20000000),
-                'address' => $sellerData['address'],
-            ]);
-        }
-
         // Products data per category
         $productsData = [
             'Elektronik' => [
@@ -87,7 +51,7 @@ class RealisticProductSeeder extends Seeder
                 ['name' => 'Car Seat Maxi-Cosi Pebble 360', 'price' => 5999000, 'stock' => 12, 'desc' => 'Car seat dengan fitur 360° rotasi dan standar keamanan Eropa. Cocok dari newborn.'],
                 ['name' => 'Baby Monitor Motorola MBP36XL', 'price' => 2799000, 'stock' => 20, 'desc' => 'Baby monitor dengan kamera HD, two-way talk, dan night vision. Pantau bayi dari smartphone.'],
                 ['name' => 'Popok Pampers Premium Care NB 72', 'price' => 159000, 'stock' => 100, 'desc' => 'Popok bayi dengan lapisan super soft dan penyerapan extra. Cocok untuk kulit sensitif.'],
-                ['name' => 'Breast Pump Spectra S1+', 'price' => 3299000, 'stock' => 18, 'desc' => 'Pompa AS I elektrik double dengan baterai built-in dan suction adjustable.'],
+                ['name' => 'Breast Pump Spectra S1+', 'price' => 3299000, 'stock' => 18, 'desc' => 'Pompa ASI elektrik double dengan baterai built-in dan suction adjustable.'],
                 ['name' => 'Baby Swing Fisher Price', 'price' => 1899000, 'stock' => 22, 'desc' => 'Ayunan bayi otomatis dengan berbagai speed dan lullaby music untuk menenangkan bayi.'],
             ],
             'Rumah Tangga' => [
@@ -108,13 +72,14 @@ class RealisticProductSeeder extends Seeder
             ],
         ];
 
-        // Seed products
+        // Seed products - assign to existing sellers randomly
+        $productCount = 0;
         foreach ($categories as $category) {
             if (isset($productsData[$category->category_name])) {
-                // Randomly assign seller
-                $seller = $sellerUsers[array_rand($sellerUsers)];
-                
                 foreach ($productsData[$category->category_name] as $product) {
+                    // Randomly assign to one of the existing sellers
+                    $seller = $sellerUsers->random();
+                    
                     Product::create([
                         'seller_id' => $seller->id,
                         'category_id' => $category->id,
@@ -124,12 +89,13 @@ class RealisticProductSeeder extends Seeder
                         'description' => $product['desc'],
                         'status' => 'active',
                     ]);
+                    $productCount++;
                 }
             }
         }
 
         $this->command->info('✅ Realistic product data seeded successfully!');
-        $this->command->info('📦 Created ' . Product::count() . ' products across ' . $categories->count() . ' categories');
-        $this->command->info('👥 Created ' . count($sellerUsers) . ' seller accounts');
+        $this->command->info('📦 Created ' . $productCount . ' products across ' . $categories->count() . ' categories');
+        $this->command->info('🏪 Using ' . $sellerUsers->count() . ' existing seller accounts');
     }
 }
