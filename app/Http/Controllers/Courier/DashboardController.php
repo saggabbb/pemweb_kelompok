@@ -13,6 +13,12 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('courier.dashboard');
+        $orders = Order::where('courier_id', Auth::id())
+            ->where('status', 'shipped')
+            ->with(['buyer', 'seller', 'details.product'])
+            ->latest()
+            ->get();
+
+        return view('courier.dashboard', compact('orders'));
     }
 }
