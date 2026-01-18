@@ -35,22 +35,22 @@
         
         <style>
             /* Responsive Navbar Styles */
-            .mobile-menu {
+            #mobileMenu {
                 transform: translateX(100%);
                 transition: transform 0.3s ease-in-out;
             }
             
-            .mobile-menu.active {
+            #mobileMenu.active {
                 transform: translateX(0);
             }
             
-            .overlay {
+            #mobileMenuOverlay {
                 opacity: 0;
                 visibility: hidden;
                 transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
             }
             
-            .overlay.active {
+            #mobileMenuOverlay.active {
                 opacity: 1;
                 visibility: visible;
             }
@@ -307,43 +307,30 @@
                 const menu = document.getElementById('mobileMenu');
                 const overlay = document.getElementById('mobileMenuOverlay');
                 
-                menu.classList.toggle('active');
-                overlay.classList.toggle('active');
+                if (menu && overlay) {
+                    menu.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                }
             }
 
             // Theme Toggle - Run after DOM loaded
             document.addEventListener('DOMContentLoaded', function() {
                 const themeToggle = document.getElementById('theme-toggle');
                 const themeToggleDot = document.getElementById('theme-toggle-dot');
-                const themeText = document.getElementById('theme-text');
-                const sunIcon = document.getElementById('sun-icon');
-                const moonIcon = document.getElementById('moon-icon');
                 const htmlElement = document.documentElement;
                 
                 // Function to update UI based on theme
                 function updateThemeUI(isDark) {
-                    if (isDark) {
-                        // Dark mode active
-                        themeToggle.style.backgroundColor = 'rgb(79, 70, 229)'; // indigo-600
-                        themeToggleDot.style.transform = 'translateX(20px)';
-                        themeText.textContent = 'Dark Mode';
-                        
-                        // Icons transition
-                        sunIcon.style.opacity = '0';
-                        sunIcon.style.transform = 'scale(0) rotate(-180deg)';
-                        moonIcon.style.opacity = '1';
-                        moonIcon.style.transform = 'scale(1) rotate(0deg)';
-                    } else {
-                        // Light mode active
-                        themeToggle.style.backgroundColor = 'rgb(229, 231, 235)'; // gray-200
-                        themeToggleDot.style.transform = 'translateX(0px)';
-                        themeText.textContent = 'Light Mode';
-                        
-                        // Icons transition
-                        sunIcon.style.opacity = '1';
-                        sunIcon.style.transform = 'scale(1) rotate(0deg)';
-                        moonIcon.style.opacity = '0';
-                        moonIcon.style.transform = 'scale(0) rotate(180deg)';
+                    if (themeToggle && themeToggleDot) {
+                        if (isDark) {
+                            // Dark mode active
+                            themeToggle.style.backgroundColor = 'rgb(79, 70, 229)'; // indigo-600
+                            themeToggleDot.style.transform = 'translateX(16px)';
+                        } else {
+                            // Light mode active
+                            themeToggle.style.backgroundColor = 'rgb(229, 231, 235)'; // gray-200
+                            themeToggleDot.style.transform = 'translateX(0px)';
+                        }
                     }
                 }
                 
@@ -354,6 +341,8 @@
                 // Apply initial theme
                 if (isDarkMode) {
                     htmlElement.classList.add('dark');
+                } else {
+                    htmlElement.classList.remove('dark');
                 }
                 updateThemeUI(isDarkMode);
                 
@@ -370,24 +359,22 @@
                             htmlElement.classList.remove('dark');
                             localStorage.setItem('theme', 'light');
                             updateThemeUI(false);
-                            console.log('Theme toggled to: light');
                         } else {
                             // Switch to dark mode
                             htmlElement.classList.add('dark');
                             localStorage.setItem('theme', 'dark');
                             updateThemeUI(true);
-                            console.log('Theme toggled to: dark');
                         }
                     });
-                } else {
-                    console.error('Theme toggle button not found');
                 }
             });
 
-            // Close menu when clicking on a link
-            document.querySelectorAll('#mobileMenu a').forEach(link => {
-                link.addEventListener('click', () => {
-                    toggleMobileMenu();
+            // Close menu when clicking on a link (but not forms)
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('#mobileMenu a:not([type="submit"])').forEach(link => {
+                    link.addEventListener('click', () => {
+                        toggleMobileMenu();
+                    });
                 });
             });
         </script>
