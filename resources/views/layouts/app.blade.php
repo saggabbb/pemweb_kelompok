@@ -156,9 +156,9 @@
                                 </svg>
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
                             </div>
-                            <button id="theme-toggle" type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 bg-gray-200 dark:bg-indigo-600">
+                            <button id="theme-toggle" type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" style="background-color: rgb(229, 231, 235);">
                                 <span class="sr-only">Toggle dark mode</span>
-                                <span class="translate-x-0 dark:translate-x-5 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                                <span id="theme-toggle-dot" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" style="transform: translateX(0px);"></span>
                             </button>
                         </div>
                     </div>
@@ -266,12 +266,29 @@
             // Theme Toggle - Run after DOM loaded
             document.addEventListener('DOMContentLoaded', function() {
                 const themeToggle = document.getElementById('theme-toggle');
+                const themeToggleDot = document.getElementById('theme-toggle-dot');
                 const htmlElement = document.documentElement;
                 
                 // Check for saved theme preference or default to light mode
                 const currentTheme = localStorage.getItem('theme') || 'light';
+                
+                // Apply initial theme
                 if (currentTheme === 'dark') {
                     htmlElement.classList.add('dark');
+                    if (themeToggle) {
+                        themeToggle.style.backgroundColor = 'rgb(79, 70, 229)'; // indigo-600
+                    }
+                    if (themeToggleDot) {
+                        themeToggleDot.style.transform = 'translateX(20px)';
+                    }
+                } else {
+                    htmlElement.classList.remove('dark');
+                    if (themeToggle) {
+                        themeToggle.style.backgroundColor = 'rgb(229, 231, 235)'; // gray-200
+                    }
+                    if (themeToggleDot) {
+                        themeToggleDot.style.transform = 'translateX(0px)';
+                    }
                 }
                 
                 // Toggle theme on button click
@@ -280,13 +297,27 @@
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        htmlElement.classList.toggle('dark');
+                        const isDark = htmlElement.classList.contains('dark');
                         
-                        // Save preference
-                        const theme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
-                        localStorage.setItem('theme', theme);
-                        
-                        console.log('Theme toggled to:', theme);
+                        if (isDark) {
+                            // Switch to light mode
+                            htmlElement.classList.remove('dark');
+                            themeToggle.style.backgroundColor = 'rgb(229, 231, 235)';
+                            if (themeToggleDot) {
+                                themeToggleDot.style.transform = 'translateX(0px)';
+                            }
+                            localStorage.setItem('theme', 'light');
+                            console.log('Theme toggled to: light');
+                        } else {
+                            // Switch to dark mode
+                            htmlElement.classList.add('dark');
+                            themeToggle.style.backgroundColor = 'rgb(79, 70, 229)';
+                            if (themeToggleDot) {
+                                themeToggleDot.style.transform = 'translateX(20px)';
+                            }
+                            localStorage.setItem('theme', 'dark');
+                            console.log('Theme toggled to: dark');
+                        }
                     });
                 } else {
                     console.error('Theme toggle button not found');
