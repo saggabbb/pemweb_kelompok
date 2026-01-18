@@ -1,6 +1,6 @@
 <x-app-layout>
-    <!-- Hero Section -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900">
+    <!-- Hero Section - Starts from top -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 -mt-px">
         <!-- Animated background elements -->
         <div class="absolute inset-0 opacity-20">
             <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>

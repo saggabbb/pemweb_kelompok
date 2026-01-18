@@ -57,7 +57,7 @@
         </style>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="bg-gray-100 dark:bg-gray-900">
             
             <!-- Navigation with Hamburger Menu (All Devices) - Sticky -->
             <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
