@@ -131,7 +131,7 @@
                             </form>
                         @endif
                     </div>
-            
+                </div>
             </div>
 
             <!-- Products -->
