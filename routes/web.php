@@ -2,6 +2,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Seller\DashboardController as SellerDashboard;
 use App\Http\Controllers\Buyer\DashboardController as BuyerDashboard;
@@ -14,6 +15,11 @@ use App\Http\Controllers\Buyer\CartController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 Route::get('/', function () {
+    // If user is logged in, redirect to their role dashboard
+    if (Auth::check()) {
+        $roleName = Auth::user()->role->role_name;
+        return redirect("/$roleName");
+    }
     return view('welcome');
 });
 
