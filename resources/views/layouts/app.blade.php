@@ -41,82 +41,21 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             
-            <!-- Responsive Navigation -->
+            <!-- Navigation with Hamburger Menu (All Devices) -->
             <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex items-center">
-                            <!-- Logo -->
-                            <a href="{{ url('/dashboard') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                                Belantra.
-                            </a>
-                        </div>
+                    <div class="flex justify-between items-center h-16">
+                        <!-- Logo -->
+                        <a href="{{ url('/dashboard') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                            Belantra.
+                        </a>
 
-                        <!-- Desktop Navigation -->
-                        <div class="hidden md:flex md:items-center md:space-x-6">
-                            <a href="{{ url('/dashboard') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                Dashboard
-                            </a>
-                            
-                            <!-- Role Based Links -->
-                            @if(auth()->user()->role->role_name === 'buyer')
-                                <a href="{{ route('buyer.orders.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    My Orders
-                                </a>
-                                <a href="{{ route('explore') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Browse Products
-                                </a>
-                                <a href="{{ route('buyer.cart.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Cart
-                                </a>
-                            @endif
-
-                            @if(auth()->user()->role->role_name === 'seller')
-                                <a href="{{ route('seller.products.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    My Products
-                                </a>
-                                <a href="{{ route('seller.orders.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Incoming Orders
-                                </a>
-                            @endif
-
-                            @if(auth()->user()->role->role_name === 'admin')
-                                <a href="{{ route('admin.orders.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Manage Orders
-                                </a>
-                                <a href="{{ route('admin.users.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Manage Users
-                                </a>
-                            @endif
-
-                            @if(auth()->user()->role->role_name === 'courier')
-                                <a href="{{ route('courier.orders.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                    Delivery Tasks
-                                </a>
-                            @endif
-
-                            <!-- Edit Profile Link -->
-                            <a href="{{ route('profile.edit') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
-                                Edit Profile
-                            </a>
-
-                            <!-- Logout -->
-                            <form method="POST" action="{{ route('logout') }}" class="inline">
-                                @csrf
-                                <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                                    Log Out
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- Mobile Hamburger Button -->
-                        <div class="md:hidden flex items-center">
-                            <button onclick="toggleMobileMenu()" class="text-gray-700 dark:text-gray-300 focus:outline-none">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
-                        </div>
+                        <!-- Hamburger Button (Always Visible) -->
+                        <button onclick="toggleMobileMenu()" class="text-gray-700 dark:text-gray-300 focus:outline-none hover:text-indigo-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </nav>
