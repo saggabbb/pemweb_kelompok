@@ -165,18 +165,30 @@
                     <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4"></div>
                     @endauth
 
-                    <!-- Dark Mode Toggle -->
-                    <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <!-- Theme Toggle with Dynamic Text -->
+                    <div class="mb-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-lg transition-all duration-300">
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <svg class="w-5 h-5 mr-3 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                                </svg>
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+                            <div class="flex items-center space-x-3">
+                                <!-- Animated Icon Container -->
+                                <div class="relative w-8 h-8 flex items-center justify-center">
+                                    <!-- Sun Icon (Light Mode) -->
+                                    <svg id="sun-icon" class="absolute w-5 h-5 text-amber-500 transition-all duration-300 transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                    </svg>
+                                    <!-- Moon Icon (Dark Mode) -->
+                                    <svg id="moon-icon" class="absolute w-5 h-5 text-indigo-400 transition-all duration-300 transform opacity-0 scale-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                                    </svg>
+                                </div>
+                                <!-- Dynamic Text -->
+                                <span id="theme-text" class="text-sm font-semibold text-gray-700 dark:text-gray-200 transition-all duration-300">
+                                    Light Mode
+                                </span>
                             </div>
-                            <button id="theme-toggle" type="button" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2" style="background-color: rgb(229, 231, 235);">
-                                <span class="sr-only">Toggle dark mode</span>
-                                <span id="theme-toggle-dot" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out" style="transform: translateX(0px);"></span>
+                            <!-- Toggle Switch -->
+                            <button id="theme-toggle" type="button" class="relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-md hover:shadow-lg" style="background-color: rgb(229, 231, 235);">
+                                <span class="sr-only">Toggle theme</span>
+                                <span id="theme-toggle-dot" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition-all duration-300 ease-in-out" style="transform: translateX(0px);"></span>
                             </button>
                         </div>
                     </div>
@@ -285,29 +297,47 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const themeToggle = document.getElementById('theme-toggle');
                 const themeToggleDot = document.getElementById('theme-toggle-dot');
+                const themeText = document.getElementById('theme-text');
+                const sunIcon = document.getElementById('sun-icon');
+                const moonIcon = document.getElementById('moon-icon');
                 const htmlElement = document.documentElement;
                 
-                // Check for saved theme preference or default to light mode
-                const currentTheme = localStorage.getItem('theme') || 'light';
-                
-                // Apply initial theme
-                if (currentTheme === 'dark') {
-                    htmlElement.classList.add('dark');
-                    if (themeToggle) {
+                // Function to update UI based on theme
+                function updateThemeUI(isDark) {
+                    if (isDark) {
+                        // Dark mode active
                         themeToggle.style.backgroundColor = 'rgb(79, 70, 229)'; // indigo-600
-                    }
-                    if (themeToggleDot) {
                         themeToggleDot.style.transform = 'translateX(20px)';
-                    }
-                } else {
-                    htmlElement.classList.remove('dark');
-                    if (themeToggle) {
+                        themeText.textContent = 'Dark Mode';
+                        
+                        // Icons transition
+                        sunIcon.style.opacity = '0';
+                        sunIcon.style.transform = 'scale(0) rotate(-180deg)';
+                        moonIcon.style.opacity = '1';
+                        moonIcon.style.transform = 'scale(1) rotate(0deg)';
+                    } else {
+                        // Light mode active
                         themeToggle.style.backgroundColor = 'rgb(229, 231, 235)'; // gray-200
-                    }
-                    if (themeToggleDot) {
                         themeToggleDot.style.transform = 'translateX(0px)';
+                        themeText.textContent = 'Light Mode';
+                        
+                        // Icons transition
+                        sunIcon.style.opacity = '1';
+                        sunIcon.style.transform = 'scale(1) rotate(0deg)';
+                        moonIcon.style.opacity = '0';
+                        moonIcon.style.transform = 'scale(0) rotate(180deg)';
                     }
                 }
+                
+                // Check for saved theme preference
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                const isDarkMode = currentTheme === 'dark';
+                
+                // Apply initial theme
+                if (isDarkMode) {
+                    htmlElement.classList.add('dark');
+                }
+                updateThemeUI(isDarkMode);
                 
                 // Toggle theme on button click
                 if (themeToggle) {
@@ -320,20 +350,14 @@
                         if (isDark) {
                             // Switch to light mode
                             htmlElement.classList.remove('dark');
-                            themeToggle.style.backgroundColor = 'rgb(229, 231, 235)';
-                            if (themeToggleDot) {
-                                themeToggleDot.style.transform = 'translateX(0px)';
-                            }
                             localStorage.setItem('theme', 'light');
+                            updateThemeUI(false);
                             console.log('Theme toggled to: light');
                         } else {
                             // Switch to dark mode
                             htmlElement.classList.add('dark');
-                            themeToggle.style.backgroundColor = 'rgb(79, 70, 229)';
-                            if (themeToggleDot) {
-                                themeToggleDot.style.transform = 'translateX(20px)';
-                            }
                             localStorage.setItem('theme', 'dark');
+                            updateThemeUI(true);
                             console.log('Theme toggled to: dark');
                         }
                     });
