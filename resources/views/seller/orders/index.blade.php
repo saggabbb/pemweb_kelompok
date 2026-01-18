@@ -44,6 +44,14 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                @if($order->status === 'confirmed' && $order->courier_id)
+                                                    <form action="{{ route('seller.orders.handover', $order) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs mr-2">
+                                                            📦 Serahkan ke Kurir
+                                                        </button>
+                                                    </form>
+                                                @endif
                                                 <a href="{{ route('seller.orders.show', $order) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-600">Details</a>
                                             </td>
                                         </tr>

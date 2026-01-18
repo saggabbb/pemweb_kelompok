@@ -66,6 +66,7 @@ Route::middleware(['role:seller'])
     ->group(function () {
         Route::resource('products', ProductController::class);
         Route::resource('orders', \App\Http\Controllers\Seller\OrderController::class)->only(['index', 'show', 'update']);
+        Route::post('orders/{order}/handover', [\App\Http\Controllers\Seller\OrderController::class, 'handoverToCourier'])->name('orders.handover');
     });
 
 Route::middleware(['role:buyer'])

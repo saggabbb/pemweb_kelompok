@@ -25,6 +25,30 @@ class OrderController extends Controller
     }
 
     /**
+     * Seller confirms handover to courier
+     */
+    public function handoverToCourier(Order $order)
+    {
+        // Verify this is seller's order
+        if ($order->seller_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Must be confirmed and have courier assigned
+        if ($order->status !== 'confirmed') {
+            return back()->with('error', 'Order harus berstatus confirmed!');
+        }
+
+        if (!$order->courier_id) {
+            return back()->with('error', 'Kurir belum ditugaskan!');
+        }
+
+        // Mark as shipped (handed over to courier)
+        $order->update(['status' => 'shipped']);
+
+        return back()->with('success', 'Barang berhasil diserahkan ke kurir!');
+    }
+    /**
      * Tampilkan detail order
      */
     public function show(Order $order)

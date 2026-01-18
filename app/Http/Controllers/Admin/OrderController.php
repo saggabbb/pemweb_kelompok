@@ -83,12 +83,12 @@ class OrderController extends Controller
 
             // Assign courier
             $order->courier_id = $availableCourier->id;
-            $order->status = 'shipped'; // Auto-ship when courier assigned
+            $order->status = 'confirmed'; // Seller will mark as 'shipped' when handing over to courier
             $order->save();
 
             return redirect()
                 ->back()
-                ->with('success', 'Order dikonfirmasi dan kurir ' . $availableCourier->name . ' berhasil ditugaskan!');
+                ->with('success', 'Order dikonfirmasi dan kurir ' . $availableCourier->name . ' berhasil ditugaskan! Menunggu penjual menyerahkan barang ke kurir.');
         }
 
         $order->update([
