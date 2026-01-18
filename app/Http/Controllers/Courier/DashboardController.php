@@ -13,12 +13,25 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $orders = Order::where('courier_id', Auth::id())
+        $courierId = Auth::id();
+        
+        // Count pending deliveries (status = 'shipped')
+        $pendingDeliveries = Order::where('courier_id', $courierId)
+            ->where('status', 'shipped')
+            ->count();
+        
+        // Count completed deliveries (status = 'completed')
+        $completedDeliveries = Order::where('courier_id', $courierId)
+            ->where('status', 'completed')
+            ->count();
+        
+        // Get active delivery orders
+        $orders = Order::where('courier_id', $courierId)
             ->where('status', 'shipped')
             ->with(['buyer', 'seller', 'details.product'])
             ->latest()
             ->get();
 
-        return view('courier.dashboard', compact('orders'));
+        return view('courier.dashboard', compact('orders', 'pendingDeliveries', 'completedDeliveries'));
     }
 }
