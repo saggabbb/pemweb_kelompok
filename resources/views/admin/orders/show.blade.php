@@ -45,7 +45,24 @@
                                     </div>
                                 </div>
                             @else
-                                <p class="text-sm text-gray-500">Order confirmed but no courier available.</p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded p-4">
+                                    <p class="text-sm text-yellow-800 font-semibold mb-2">⚠ Order is {{ ucfirst($order->status) }} but no courier assigned!</p>
+                                    
+                                    <form action="{{ route('admin.orders.assign-courier', $order) }}" method="POST">
+                                        @csrf
+                                        <div class="flex gap-2">
+                                            <select name="courier_id" class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                <option value="">-- Select Courier --</option>
+                                                @foreach($couriers as $courier)
+                                                    <option value="{{ $courier->id }}">{{ $courier->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 text-sm whitespace-nowrap">
+                                                Assign Manually
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
                             @endif
                         </div>
                     </div>

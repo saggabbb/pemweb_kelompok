@@ -141,8 +141,13 @@ public function assignCourier(Request $request, Order $order)
         return back()->with('error', 'User yang dipilih bukan kurir!');
     }
 
-    if ($order->status !== 'pending') {
-        return back()->with('error', 'Order harus berstatus pending untuk assign kurir!');
+    // Allow normally for pending/processing.
+    // ALSO allow for 'shipped' ONLY IF no courier is assigned yet (fixing bad data).
+    $isAssignable = in_array($order->status, ['pending', 'processing']) || 
+                    ($order->status === 'shipped' && is_null($order->courier_id));
+
+    if (!$isAssignable) {
+        return back()->with('error', 'Order tidak dapat di-assign kurir (Status: ' . $order->status . ')');
     }
 
     // If COD, courier advances payment to seller

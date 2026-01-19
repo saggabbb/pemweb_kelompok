@@ -81,6 +81,11 @@ class OrderController extends Controller
             return $this->cancelAndDelete($order);
         }
 
+        // Validate if setting to 'shipped'
+        if ($request->status === 'shipped' && !$order->courier_id) {
+            return back()->with('error', 'Tidak dapat mengubah status menjadi Shipped karena kurir belum ditugaskan oleh Admin!');
+        }
+
         $order->status = $request->status;
         $order->save();
 
