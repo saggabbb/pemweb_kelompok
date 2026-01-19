@@ -81,6 +81,7 @@ Route::middleware(['role:buyer'])
         
         // Orders
         Route::resource('orders', BuyerOrderController::class);
+        Route::post('orders/{order}/pay', [BuyerOrderController::class, 'confirmPayment'])->name('orders.pay');
 
         // Cart
         Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');

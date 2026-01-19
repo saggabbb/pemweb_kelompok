@@ -86,17 +86,11 @@ class CartController extends Controller
                 $shippingFee = 10000; 
                 $grandTotal = $totalPrice + $shippingFee;
 
-                // --- 1. POTONG SALDO BUYER ---
-                if ($user->balance < $grandTotal) {
-                    throw new \Exception('Saldo tidak cukup! Saldo Anda: Rp ' . number_format($user->balance));
-                }
-                $user->decrement('balance', $grandTotal);
-
-                // --- 2. TAMBAH SALDO SELLER ---
-                $sellerUser = User::find($sellerId);
-                if ($sellerUser) {
-                    $sellerUser->increment('balance', $totalPrice);
-                }
+                // --- 1. SKIP POTONG SALDO (Pindah ke Confirm Payment) ---
+                // Balance check moved to OrderController::confirmPayment
+                
+                // --- 2. SKIP TAMBAH SALDO SELLER ---
+                // Moved to OrderController::confirmPayment
 
                 // --- 3. SIMPAN DATA ORDER ---
                 $order = Order::create([
@@ -104,7 +98,7 @@ class CartController extends Controller
                     'seller_id'      => $sellerId,
                     'total_price'    => $grandTotal,
                     'payment_method' => $request->payment_method ?? 'transfer',
-                    'status'         => 'processing',
+                    'status'         => 'pending', // Status awal pending sampai dikonfirmasi
                     'order_date'     => now(), // Tambahkan ini untuk mengisi order_date
                 ]);
                 

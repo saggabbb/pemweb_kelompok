@@ -57,10 +57,19 @@
                                 @if($order->payment_method === 'transfer')
                                     <div>
                                         <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Payment QR Code</p>
-                                        <div class="bg-white p-4 rounded-lg inline-block border border-gray-200">
+                                        <div class="bg-white p-4 rounded-lg inline-block border border-gray-200 [&>svg]:w-full [&>svg]:h-auto max-w-[200px]">
                                             {!! $qrCode !!}
                                         </div>
-                                        <p class="text-xs text-gray-500 mt-2">Scan to pay via QRIS</p>
+                                        <p class="text-xs text-gray-500 mt-2 mb-4">Scan to pay via QRIS</p>
+                                        
+                                        @if($order->status === 'pending')
+                                            <form action="{{ route('buyer.orders.pay', $order) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                    {{ __('Confirm Payment') }}
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 @elseif($order->payment_method === 'cod')
                                     <div>

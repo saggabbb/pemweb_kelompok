@@ -53,8 +53,24 @@ class ProductController extends Controller
         $data['status'] = 'active';
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')
-                ->store('products', 'public');
+            $file = $request->file('image');
+            
+            // Manual storage to bypass "Path cannot be empty" error on Windows/Temp
+            $filename = $file->hashName();
+            try {
+                // Try standard store first (it might work on other envs)
+                $data['image'] = $file->store('products', 'public');
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Image Store Standard Failed, trying fallback: ' . $e->getMessage());
+                
+                if ($file->isValid()) {
+                    $path = 'products/' . $filename;
+                    \Illuminate\Support\Facades\Storage::disk('public')->put($path, file_get_contents($file->getPathname()));
+                    $data['image'] = $path;
+                } else {
+                    throw $e;
+                }
+            }
         }
 
         Product::create($data);

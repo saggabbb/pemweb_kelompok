@@ -13,6 +13,58 @@ use Illuminate\Support\Facades\DB;
 class OrderController extends Controller
 {
     /**
+     * Konfirmasi Pembayaran (Manual)
+     */
+    public function confirmPayment(Order $order)
+    {
+        if ($order->buyer_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'pending') {
+            return back()->with('error', 'Pesanan ini tidak dalam status pending.');
+        }
+
+        if ($order->payment_method !== 'transfer') {
+            return back()->with('error', 'Metode pembayaran bukan transfer.');
+        }
+
+        $user = auth()->user();
+
+        // Cek Saldo
+        if ($user->balance < $order->total_price) {
+             return back()->with('error', 'Saldo tidak mencukupi! Harap top up terlebih dahulu.');
+        }
+
+        DB::transaction(function () use ($order, $user) {
+            // 1. Potong Saldo Buyer
+            $user->decrement('balance', $order->total_price);
+
+            // 2. Tambah Saldo Seller
+            // Hitung ulang total produk (tanpa ongkir 10000)
+            // Asumsi: total_price di order sudah termasuk ongkir 10000 fix
+            $shippingFee = 10000;
+            $sellerAmount = $order->total_price - $shippingFee;
+
+            if ($sellerAmount > 0) {
+                $seller = \App\Models\User::find($order->seller_id);
+                if ($seller) {
+                    $seller->increment('balance', $sellerAmount);
+                }
+            }
+
+            // 3. Update Status
+            $order->update([
+                'status' => 'processing',
+                // 'status' => 'paid', // Opsional, tergantung flow. Biasanya processing stlh bayar.
+            ]);
+        });
+
+
+
+        return redirect()->route('buyer.dashboard')->with('success', 'Pembayaran berhasil! Saldo telah terpotong.');
+    }
+    /**
      * List order milik buyer
      */
     public function index()

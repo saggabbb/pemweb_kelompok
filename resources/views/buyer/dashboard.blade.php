@@ -248,12 +248,19 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                            <a href="{{ route('buyer.orders.show', $order) }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium group">
-                                                Details
-                                                <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                                                </svg>
-                                            </a>
+                                            <div class="flex flex-col items-end gap-2">
+                                                @if($order->status == 'pending')
+                                                    <a href="{{ route('buyer.orders.show', $order) }}" class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase rounded-full hover:bg-green-200 transition-colors">
+                                                        Pay Now
+                                                    </a>
+                                                @endif
+                                                <a href="{{ route('buyer.orders.show', $order) }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium group">
+                                                    Details
+                                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
