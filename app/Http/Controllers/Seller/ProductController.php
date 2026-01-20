@@ -106,8 +106,22 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($product->image);
             }
 
-            $data['image'] = $request->file('image')
-                ->store('products', 'public');
+            $file = $request->file('image');
+            $filename = $file->hashName();
+            
+            try {
+                // Try standard store first
+                $data['image'] = $file->store('products', 'public');
+            } catch (\Throwable $e) {
+                // Fallback for Windows "Path cannot be empty" error
+                if ($file->isValid()) {
+                    $path = 'products/' . $filename;
+                    Storage::disk('public')->put($path, file_get_contents($file->getPathname()));
+                    $data['image'] = $path;
+                } else {
+                    throw $e;
+                }
+            }
         }
 
         $product->update($data);

@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <x-auth-session-status class="mb-4" :status="session('success')" />
+                    <x-auth-session-status class="mb-4 !text-purple-600 dark:!text-purple-400" :status="session('success')" />
                     
                     @if($products->count() > 0)
                         <div class="overflow-x-auto">
@@ -33,16 +33,17 @@
                                         <tr>
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center">
-                                                    @if($product->image)
-                                                        <img class="h-10 w-10 rounded object-cover mr-3" src="{{ Storage::url($product->image) }}" alt="">
-                                                    @else
-                                                        <div class="h-10 w-10 rounded bg-gray-200 mr-3"></div>
-                                                    @endif
-                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $product->product_name }}</div>
+                                                    @php
+                                                        $productImageUrl = $product->image 
+                                                            ? (strpos($product->image, 'http') === 0 ? $product->image : Storage::url($product->image))
+                                                            : "https://ui-avatars.com/api/?name=" . urlencode($product->product_name) . "&size=100&background=6366f1&color=fff";
+                                                    @endphp
+                                                    <img class="h-10 w-10 rounded-lg object-cover mr-3 shadow-sm" src="{{ $productImageUrl }}" alt="{{ $product->product_name }}">
+                                                    <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $product->product_name }}</div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $product->category->name ?? '-' }}
+                                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                                                {{ $product->category->category_name ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
                                                 Rp {{ number_format($product->price, 0, ',', '.') }}

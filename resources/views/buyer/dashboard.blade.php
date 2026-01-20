@@ -1,14 +1,5 @@
 <x-app-layout>
 
-    <style>
-        body {
-        background-color: #f0f9ff !important; /* Warna blue-50 */
-    }
-    .min-h-screen {
-        background-color: #f0f9ff !important;
-    }
-
-    </style>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Buyer Dashboard') }}
@@ -16,7 +7,7 @@
     </x-slot>
 
     <div class="pt-6 pb-12">
-        <div class="py-12 bg-blue-50"> <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="py-12 bg-gray-50 dark:bg-gray-900"> <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             <!-- Welcome Section -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
@@ -48,13 +39,13 @@
         </div>
     </div>
 
-    <div class="group bg-white dark:bg-gray-800 p-1 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 bg-gradient-to-br from-emerald-500/10 to-transparent">
+    <div class="group bg-white dark:bg-gray-800 p-1 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 bg-gradient-to-br from-purple-500/10 to-transparent">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl flex items-center">
-            <div class="p-4 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none mr-4 group-hover:scale-110 transition-transform">
+            <div class="p-4 bg-purple-500 text-white rounded-xl shadow-lg shadow-purple-200 dark:shadow-none mr-4 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
             <div>
-                <p class="text-xs font-bold text-emerald-500 uppercase tracking-widest">Total Belanja</p>
+                <p class="text-xs font-bold text-purple-500 uppercase tracking-widest">Total Belanja</p>
                 <p class="text-3xl font-black text-gray-800 dark:text-white">Rp {{ number_format($orders->sum('total_price'), 0, ',', '.') }}</p>
             </div>
         </div>
@@ -142,7 +133,7 @@
                                 <div class="text-4xl font-extrabold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                     {{ $orders->count() }}
                                 </div>
-                                <div class="mt-4 flex items-center text-sm text-green-600 dark:text-green-400 font-medium">
+                                <div class="mt-4 flex items-center text-purple-600 dark:text-purple-400 font-medium">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
@@ -238,7 +229,7 @@
                                                 $statusClasses = [
                                                     'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
                                                     'processing' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                                    'completed' => 'bg-green-100 text-green-800 border-green-200',
+                                                    'completed' => 'bg-purple-100 text-purple-800 border-purple-200',
                                                     'cancelled' => 'bg-red-100 text-red-800 border-red-200',
                                                 ];
                                                 $currentClass = $statusClasses[$order->status] ?? 'bg-gray-100 text-gray-800 border-gray-200';
@@ -250,7 +241,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                                             <div class="flex flex-col items-end gap-2">
                                                 @if($order->status == 'pending')
-                                                    <a href="{{ route('buyer.orders.show', $order) }}" class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-xs font-bold uppercase rounded-full hover:bg-green-200 transition-colors">
+                                                    <a href="{{ route('buyer.orders.show', $order) }}" class="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 text-xs font-bold uppercase rounded-full hover:bg-purple-200 transition-colors">
                                                         Pay Now
                                                     </a>
                                                 @endif

@@ -44,24 +44,22 @@
                             <a href="{{ route('products.show', $product) }}" class="group">
                                 <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700">
                                     {{-- Product Image --}}
-                                    <div class="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
-                                        @if($product->image)
-                                            @php
-                                                // Check if it's a URL or storage path
+                                    <div class="relative h-56 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
+                                        @php
+                                            $productImageUrl = null;
+                                            if($product->image) {
                                                 $productImageUrl = (strpos($product->image, 'http') === 0) 
                                                     ? $product->image 
                                                     : Storage::url($product->image);
-                                            @endphp
-                                            <img src="{{ $productImageUrl }}" 
-                                                 alt="{{ $product->product_name }}" 
-                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center">
-                                                <svg class="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
-                                            </div>
-                                        @endif
+                                            } else {
+                                                // Fallback to a nice placeholder based on name
+                                                $productImageUrl = "https://ui-avatars.com/api/?name=" . urlencode($product->product_name) . "&size=400&background=6366f1&color=fff";
+                                            }
+                                        @endphp
+                                        <img src="{{ $productImageUrl }}" 
+                                             alt="{{ $product->product_name }}" 
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                        
                                         {{-- Category Badge --}}
                                         <div class="absolute top-3 left-3">
                                             <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-full text-xs font-semibold text-indigo-600 dark:text-indigo-400">

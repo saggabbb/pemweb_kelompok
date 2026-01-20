@@ -28,6 +28,15 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('seller.dashboard', compact('totalOrders', 'totalRevenue', 'recentOrders'));
+        // Monthly Sales for Chart (Line Chart Data)
+        $monthlySales = Order::selectRaw('SUM(total_price) as total, DATE_FORMAT(created_at, "%Y-%m") as month_year, DATE_FORMAT(created_at, "%b") as month_name')
+            ->where('seller_id', $sellerId)
+            ->where('status', 'completed')
+            ->where('created_at', '>=', now()->subMonths(6))
+            ->groupBy('month_year', 'month_name')
+            ->orderBy('month_year', 'asc')
+            ->get();
+
+        return view('seller.dashboard', compact('totalOrders', 'totalRevenue', 'recentOrders', 'monthlySales'));
     }
 }

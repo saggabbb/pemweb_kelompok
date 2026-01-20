@@ -60,15 +60,15 @@
         <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
             
             <!-- Navigation with Hamburger Menu (All Devices) - Sticky -->
-            <nav class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+            <nav class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-300">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
                         <!-- Logo -->
                         <a href="{{ url('/') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">
                             Belantra.
                         </a>
 
-                        <!-- Search Bar (Browse Products) - Hidden on Homepage -->
-                        @if(!request()->is('/'))
+                        <!-- Search Bar (Browse Products) - Hidden on Homepage, Admin, AND Seller -->
+                        @if(!request()->is('/') && !request()->is('admin*') && !request()->is('seller*'))
                         <div class="flex-1 max-w-2xl mx-4">
                             <form action="{{ route('explore') }}" method="GET" class="relative">
                                 <div class="relative">
@@ -239,6 +239,14 @@
                                     </svg>
                                 </div>
                                 Categories
+                            </a>
+                            <a href="{{ route('admin.topups.index') }}" class="group flex items-center p-2.5 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-white/5 transition-all">
+                                <div class="mr-3 p-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                Financials
                             </a>
                             @endif
 

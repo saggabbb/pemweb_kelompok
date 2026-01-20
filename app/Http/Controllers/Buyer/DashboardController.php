@@ -36,10 +36,14 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
-        // Sesuai permintaan temanmu, pastikan logika saldo benar
-        $user->balance += $request->amount;
-        $user->save();
+        
+        // Create pending topup request
+        \App\Models\Topup::create([
+            'user_id' => $user->id,
+            'amount' => $request->amount,
+            'status' => 'pending',
+        ]);
 
-        return redirect()->back()->with('success', 'Balance topped up successfully! Rp ' . number_format($request->amount, 0, ',', '.'));
+        return redirect()->back()->with('success', 'Top-up request submitted! Waiting for admin approval.');
     }
 }

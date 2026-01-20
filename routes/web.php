@@ -119,6 +119,11 @@ Route::middleware(['role:admin'])
         
         // Users (Full CRUD)
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+
+        // Topups
+        Route::get('topups', [\App\Http\Controllers\Admin\TopupController::class, 'index'])->name('topups.index');
+        Route::post('topups/{topup}/approve', [\App\Http\Controllers\Admin\TopupController::class, 'approve'])->name('topups.approve');
+        Route::post('topups/{topup}/reject', [\App\Http\Controllers\Admin\TopupController::class, 'reject'])->name('topups.reject');
     });
 
 Route::middleware(['role:courier'])

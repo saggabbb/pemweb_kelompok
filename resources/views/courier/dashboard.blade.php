@@ -16,7 +16,7 @@
                             <div class="font-bold text-xl">{{ $pendingDeliveries }}</div>
                             <div class="text-sm">Pending Delivery</div>
                         </div>
-                         <div class="bg-green-100 dark:bg-green-900 p-4 rounded-lg">
+                         <div class="bg-purple-100 dark:bg-purple-900 p-4 rounded-lg">
                             <div class="font-bold text-xl">{{ $completedDeliveries }}</div>
                             <div class="text-sm">Delivered</div>
                         </div>
