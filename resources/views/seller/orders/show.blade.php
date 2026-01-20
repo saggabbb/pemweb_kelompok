@@ -61,8 +61,8 @@
                             </div>
                         @endif
 
-                        @if($order->status === 'completed')
-                            <!-- Order Completed Display -->
+                        @if($order->status === 'received' || $order->status === 'completed')
+                            <!-- Order Completed/Received Display -->
                             <div class="p-6 bg-green-50 dark:bg-green-900 border-2 border-green-500 dark:border-green-600 rounded-lg text-center">
                                 <div class="flex justify-center mb-4">
                                     <svg class="w-20 h-20 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,13 +70,13 @@
                                     </svg>
                                 </div>
                                 <h4 class="text-2xl font-bold text-green-700 dark:text-green-300 mb-2">
-                                    ✓ Pesanan Selesai
+                                    ✓ Pesanan {{ $order->status === 'received' ? 'Diterima' : 'Selesai' }}
                                 </h4>
                                 <p class="text-green-800 dark:text-green-200 mb-4">
-                                    Produk telah berhasil sampai ke penerima!
+                                    Barang telah diterima oleh pembeli. Transaksi selesai!
                                 </p>
                                 <div class="bg-white dark:bg-gray-800 rounded-lg p-4 mt-4">
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">Completed on:</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Diterima pada:</p>
                                     <p class="text-lg font-semibold">{{ $order->updated_at->format('d M Y, H:i') }}</p>
                                 </div>
                             </div>
@@ -85,14 +85,21 @@
                             <div class="mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Current Status:</p>
                                 <p class="text-xl font-bold {{ match($order->status) {
-                                    'completed' => 'text-green-600',
+                                    'completed', 'received' => 'text-green-600',
+                                    'delivered' => 'text-emerald-600',
                                     'confirmed' => 'text-blue-600',
                                     'shipped' => 'text-indigo-600',
                                     'pending' => 'text-yellow-600',
                                     'cancelled' => 'text-red-600',
                                     default => 'text-gray-600'
                                 } }}">
-                                    {{ ucfirst($order->status) }}
+                                    @if($order->status === 'received')
+                                        Diterima
+                                    @elseif($order->status === 'delivered')
+                                        Sudah Sampai
+                                    @else
+                                        {{ ucfirst($order->status) }}
+                                    @endif
                                 </p>
                             </div>
 

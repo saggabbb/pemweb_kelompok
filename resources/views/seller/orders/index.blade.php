@@ -35,12 +35,20 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                     {{ match($order->status) {
-                                                        'completed', 'delivered' => 'bg-green-100 text-green-800',
+                                                        'completed', 'received' => 'bg-green-100 text-green-800',
+                                                        'delivered' => 'bg-emerald-100 text-emerald-800',
                                                         'processing', 'shipped' => 'bg-blue-100 text-blue-800',
+                                                        'confirmed' => 'bg-indigo-100 text-indigo-800',
                                                         'cancelled' => 'bg-red-100 text-red-800',
                                                         default => 'bg-yellow-100 text-yellow-800'
                                                     } }}">
-                                                    {{ ucfirst($order->status) }}
+                                                    @if($order->status === 'received')
+                                                        Diterima
+                                                    @elseif($order->status === 'delivered')
+                                                        Sampai
+                                                    @else
+                                                        {{ ucfirst($order->status) }}
+                                                    @endif
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

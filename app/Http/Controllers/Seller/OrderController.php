@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -30,7 +31,7 @@ class OrderController extends Controller
     public function handoverToCourier(Order $order)
     {
         // Verify this is seller's order
-        if ($order->seller_id !== Auth::id()) {
+        if ($order->seller_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
 

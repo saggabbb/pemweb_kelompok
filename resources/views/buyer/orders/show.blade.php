@@ -20,12 +20,20 @@
                             <div class="text-right">
                                 <span class="px-3 py-1 text-sm font-semibold rounded-full 
                                     {{ match($order->status) {
-                                        'completed', 'delivered' => 'bg-green-100 text-green-800',
+                                        'completed', 'received' => 'bg-green-100 text-green-800',
+                                        'delivered' => 'bg-emerald-100 text-emerald-800',
                                         'processing', 'shipped' => 'bg-blue-100 text-blue-800',
+                                        'confirmed' => 'bg-indigo-100 text-indigo-800',
                                         'cancelled' => 'bg-red-100 text-red-800',
                                         default => 'bg-yellow-100 text-yellow-800'
                                     } }}">
-                                    {{ ucfirst($order->status) }}
+                                    @if($order->status === 'received')
+                                        Diterima
+                                    @elseif($order->status === 'delivered')
+                                        Sudah Sampai
+                                    @else
+                                        {{ ucfirst($order->status) }}
+                                    @endif
                                 </span>
                             </div>
                         </div>
@@ -81,8 +89,29 @@
                                 @endif
                             </div>
                         </div>
+
+                        {{-- Action Buttons --}}
+                        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            @if($order->status === 'delivered')
+                                <div class="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="text-lg font-bold text-indigo-900 dark:text-indigo-100">Pesanan Sudah Sampai?</h4>
+                                            <p class="text-sm text-indigo-700 dark:text-indigo-300">Silakan konfirmasi jika Anda sudah menerima barang dengan baik.</p>
+                                        </div>
+                                        <form action="{{ route('buyer.orders.confirm-receipt', $order) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all transform hover:scale-105">
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                Konfirmasi Diterima
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-            </div>
 
             <!-- Products -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">

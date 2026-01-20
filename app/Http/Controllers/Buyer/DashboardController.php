@@ -24,7 +24,7 @@ class DashboardController extends Controller
         
         // Menghitung total belanja hanya dari order yang statusnya 'completed'
         // Cek kembali di database apakah statusnya 'completed' atau 'success'
-        $totalSpent = $orders->where('status', 'completed')->sum('total_price');
+        $totalSpent = $orders->whereIn('status', ['completed', 'delivered', 'received'])->sum('total_price');
 
         return view('buyer.dashboard', compact('orders', 'totalOrders', 'totalSpent', 'user'));
     }

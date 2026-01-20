@@ -41,7 +41,7 @@ class OrderController extends Controller
         $courier->increment('balance', $order->shipping_fee);
 
         $order->update([
-            'status' => 'completed',
+            'status' => 'delivered',
         ]);
 
         return back()->with('success', 'Order selesai! Ongkir Rp ' . number_format($order->shipping_fee, 0, ',', '.') . ' ditambahkan ke saldo Anda.');

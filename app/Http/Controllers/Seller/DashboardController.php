@@ -18,7 +18,7 @@ class DashboardController extends Controller
         
         // Total revenue for this seller
         $totalRevenue = Order::where('seller_id', $sellerId)
-            ->whereIn('status', ['completed', 'shipped', 'confirmed'])
+            ->whereIn('status', ['completed', 'shipped', 'confirmed', 'delivered', 'received'])
             ->sum('total_price');
         
         // Recent orders (only for this seller)
@@ -31,7 +31,7 @@ class DashboardController extends Controller
         // Monthly Sales for Chart (Line Chart Data)
         $monthlySales = Order::selectRaw('SUM(total_price) as total, DATE_FORMAT(created_at, "%Y-%m") as month_year, DATE_FORMAT(created_at, "%b") as month_name')
             ->where('seller_id', $sellerId)
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'delivered', 'received'])
             ->where('created_at', '>=', now()->subMonths(6))
             ->groupBy('month_year', 'month_name')
             ->orderBy('month_year', 'asc')

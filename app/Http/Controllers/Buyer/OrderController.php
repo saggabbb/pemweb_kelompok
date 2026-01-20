@@ -60,9 +60,27 @@ class OrderController extends Controller
             ]);
         });
 
-
-
         return redirect()->route('buyer.dashboard')->with('success', 'Pembayaran berhasil! Saldo telah terpotong.');
+    }
+
+    /**
+     * Konfirmasi Barang Diterima
+     */
+    public function confirmReceipt(Order $order)
+    {
+        if ($order->buyer_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'delivered') {
+            return back()->with('error', 'Pesanan belum dalam status dikirim.');
+        }
+
+        $order->update([
+            'status' => 'received',
+        ]);
+
+        return back()->with('success', 'Konfirmasi berhasil! Terima kasih telah berbelanja.');
     }
     /**
      * List order milik buyer
